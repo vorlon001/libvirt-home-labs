@@ -1,4 +1,4 @@
-# Mad-Hatter-or-The-Rabbit-Hole
+# Mad Hatter or The Rabbit Hole
 
 INIT
 need CPE KVM-OK, INTEL-TV
