@@ -4,6 +4,7 @@
 
 
 INIT
+
 need CPU KVM-OK, INTEL-TV
 
 ```shell
