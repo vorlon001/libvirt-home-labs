@@ -3,6 +3,8 @@
 ![alt text](MadlHatterByTenniel.jpg)
 
 
+###  this script creates ubuntu 20.04, 21.04, 21.10 , 22.10, debian 10, 11
+
 INIT
 
 need CPU KVM-OK, INTEL-TV
