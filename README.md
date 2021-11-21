@@ -1,9 +1,9 @@
 # Create VM libvirt
 
-![alt text](MadlHatterByTenniel.jpg)
 
 
-###  this script creates ubuntu 20.04, 21.04, 21.10 , 22.10, debian 10, 11
+
+###  this script creates ubuntu 20.04, 21.04, 21.10 , 22.10, debian 10, 11, centos 8, fedorecore 34, 35
 
 INIT
 
