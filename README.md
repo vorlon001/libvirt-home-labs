@@ -41,3 +41,5 @@ IMAGES UBUNTU
 -rw-r--r--  1 libvirt-qemu kvm   566165504 Oct 20 07:48 jammy-server-cloudimg-amd64.img
 
 ```
+
+### Need two network: cloud1, cloud2
