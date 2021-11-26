@@ -17,8 +17,8 @@ sudo apt-get install -y cloud-image-utils pdsh
 
 ```shell
 mkdir IMAGES
-git clone https://github.com/vorlon001/Mad-Hatter-or-The-Rabbit-Hole
-mv Mad-Hatter-or-The-Rabbit-Hole KVM
+git clone https://github.com/vorlon001/libvirt-home-labs
+mv libvirt-home-labs KVM
 
 cd KVM
 cd run.sh
