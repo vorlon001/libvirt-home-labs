@@ -83,30 +83,30 @@ class WARP_DRIVE(BASE):
                      if isinstance(kwargs[i],func.__annotations__[i])==False:
                          raise ValueError("Error type vars:{0} = {1} in args {0} = {2} '{3}'".format(i,func.__annotations__[i],type(kwargs[i]),kwargs[i]))
           except SystemExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 401, "kwargs":kwargs, "Exception": e }
           except KeyboardInterrupt as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 402, "kwargs":kwargs, "Exception": e }
           except GeneratorExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 403, "kwargs":kwargs, "Exception": e }
           except Exception as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 404, "kwargs":kwargs, "Exception": e }
           try:
             result = func(*args, **kwargs)
           except SystemExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 501, "kwargs":kwargs, "Exception": e }
           except KeyboardInterrupt as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 502, "kwargs":kwargs, "Exception": e }
           except GeneratorExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 503, "kwargs":kwargs, "Exception": e }
           except Exception as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 500, "kwargs":kwargs, "Exception": e }
           return { "code": 200, "kwargs":kwargs, "result": result }
         return tmp
@@ -121,30 +121,30 @@ class WARP_DRIVE(BASE):
                      if isinstance(kwargs[i],func.__annotations__[i])==False:
                          raise ValueError("Error type vars:{0} = {1} in args {0} = {2} '{3}'".format(i,func.__annotations__[i],type(kwargs[i]),kwargs[i]))
           except SystemExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 401, "kwargs":kwargs, "Exception": e }
           except KeyboardInterrupt as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 402, "kwargs":kwargs, "Exception": e }
           except GeneratorExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 403, "kwargs":kwargs, "Exception": e }
           except Exception as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 404, "kwargs":kwargs, "Exception": e }
           try:
             func(*args, **kwargs)
           except SystemExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 501, "kwargs":kwargs, "Exception": e }
           except KeyboardInterrupt as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 502, "kwargs":kwargs, "Exception": e }
           except GeneratorExit as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 503, "kwargs":kwargs, "Exception": e }
           except Exception as e:
-            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"kwargs":kwargs, "Exception": None , "attr": func }))
+            log(message = "Error WARP_DRIVE {ERROR}".format(ERROR={"args": args, "kwargs":kwargs, "Exception": e , "attr": func }))
             return { "code": 500, "kwargs":kwargs, "Exception": e }
           return { "code": 200, "kwargs":kwargs, "result": True }
         return tmp

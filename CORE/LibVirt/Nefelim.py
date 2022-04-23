@@ -67,12 +67,13 @@ class Nefelim(Connector):
         log(message = "Nefelim().LibvirtConfig()")
         self.LibvirtRunVm()
         log(message = "Nefelim().LibvirtConfig()")
-        self.LibvirtRunStep2Vm()
+        e = self.LibvirtRunStep2Vm()
         log(message = "Nefelim().LibvirtConfig()")
         self.LibvirtRunStep3Vm()
         log(message = "Nefelim().Run() END")
 
 
+    @WARP_DRIVE.decorator_void
     def UserDataConfig(self):
 
         _,self.create_image_vm = (tmp_vars:=self.network["block"][[ i for i in copy.copy(self.network['block'])][:1].pop() ]["network"]), \
@@ -176,7 +177,9 @@ class Nefelim(Connector):
 """
 
         self.disk_seed = self.disk_seed.format(VMNAME = self.VMNAME)
-        self.vm = self.vmObject(self.conn,self.VMNAME)
+
+        _,self.vm = (tmp:=self.vmObject(self.conn,self.VMNAME)), tmp["result"] if tmp["code"]==200 else sys.exit(1);
+
         self.vm.detachDeviceFlags( self.disk_seed, flags = libvirt.VIR_DOMAIN_AFFECT_CURRENT | libvirt.VIR_DOMAIN_AFFECT_CONFIG | libvirt.VIR_DOMAIN_AFFECT_LIVE)
 
         # -----------------------------

@@ -51,7 +51,7 @@ class Utils(Base):
     @WARP_DRIVE.decorator_void
     def getStatusSsh(self, ipaddress: str):
         while True:
-            _,sshd_config_active = (tmp := self.isSshEnable(ipaddress=ipaddress)), tmp["result"] if tmp["code"]==200 else sys.exit(1);
+            _,sshd_config_active = (tmp := self.isSshEnable(ipaddress=ipaddress, port=22)), tmp["result"] if tmp["code"]==200 else sys.exit(1);
             if sshd_config_active==True:
                 print("SSH on VM ENABLE", ipaddress)
                 break

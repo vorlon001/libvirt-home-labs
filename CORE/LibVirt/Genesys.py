@@ -140,7 +140,7 @@ class Genesys(VirtUtils):
         self.vm_disk = [ i.format(VMNAME=self.VMNAME)for i in self.vm_disk_tpl ]
         # 10
         self.network_interface = ["enp1s0","enp2s0"]
-        self.INTERFACE = [ {'name': i, 'mac': self.random_mac(self.network)   } for i in self.network_interface ]
+        self.INTERFACE = [ {'name': i, 'mac': self.random_mac(self.network)["result"]   } for i in self.network_interface ]
         # 11
         self.node_ip = copy.deepcopy(self.network["block"])
         # 12
