@@ -1,0 +1,65 @@
+after-deploy:
+- 'PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  pdsh -R ssh -w root@{} "echo ''datasource_list: [ None ]'' | sudo -s tee /etc/cloud/cloud.cfg.d/90_dpkg.cfg"'
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  pdsh -R ssh -w root@{} "sudo apt-get purge -y cloud-init"
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  pdsh -R ssh -w root@{} "sudo rm -rf /etc/cloud/; sudo rm -rf /var/lib/cloud/"
+command:
+- systemctl disable systemd-udevd.service
+- ssh-keygen -A
+- ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa  -q -P ""
+- ssh-keygen -t rsa -b 4096 -f /home/vorlon/.ssh/id_rsa  -q -P ""
+- cp /etc/netplan/50-cloud-init.yaml /etc/netplan/00-installer-config.yaml
+- touch /etc/cloud/cloud-init.disabled
+config:
+  NETWORK_CONFIG_TPL: TPL/network-config.tpl
+  NEXUS_REPO: https://archive.ubuntu.com/
+  NEXUS_REPO_SEC: https://security.ubuntu.com
+  PIP_TPL_PATH: TPL/pip-conf.tpl
+  ROOT_CERT_PATH: CERT/root.iblog.pro.crt
+  SSD_TPL_PATH: TPL/sshd-config.tpl
+  SSH_AUTH_KEYS: /root/.ssh/authorized_keys
+  USER_DATA_PATH: JSON/user-data.json
+  USER_DATA_TPL_PATH: TPL/user-data.tpl
+  VMNAME_FQDN: '{VMNAME}.cloud.local'
+  VM_REPO: focal
+  VM_TEMPLATE: TPL/vm.template.xml
+create-image-vm:
+- rm ./{VMNAME}-seed.qcow2
+- rm ./{VMNAME}.qcow2
+- qemu-img create -F qcow2 -b <REMOVE>/jammy-server-cloudimg-amd64.img -f
+  qcow2 {VMNAME}.qcow2 {ROOTFS_SIZE}G
+- cloud-localds -v --network-config=<REMOVE>/network-config.{VMNAME} <REMOVE>/node100-seed.qcow2
+  <REMOVE>/user-data.{VMNAME} <REMOVE>/meta-data
+- ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}"
+network:
+  block:
+    '200':
+      gateway4: 10.x.x.1
+      nameservers:
+        ip: x.x.x.10
+        search: cloud.local
+      netmask: 24
+      network: 10.x.x.
+  magic_mac: fa:16:3e
+pgk:
+- apt-transport-https
+- ca-certificates
+- curl
+- gnupg
+- lsb-release
+- openssh-server
+- net-tools
+- tcpdump
+- mc
+- htop
+- iotop
+- iftop
+- language-pack-ru
+- pwgen
+ssh-keys:
+- root@<REMOVE>
+vm-disk:
+- <REMOVE>/{VMNAME}.qcow2
+- <REMOVE>/{VMNAME}-seed.qcow2
