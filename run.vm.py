@@ -1,11 +1,11 @@
 try:
-    import CORE.LOADER
-    CORE.LOADER.lm(globals(),
-				"CORE.Nefelim", "sys"
+    import CORE.Core.LOADER as boot
+    boot.lm(globals(),
+				"CORE.LibVirt.Nefelim", "sys"
 				)
 
-    CORE.LOADER.iglob(globals(),[
-                            { "module": "CORE.Nefelim",   "method":"Nefelim",     "as": "Nefelim"    }
+    boot.iglob(globals(),[
+                            { "module": "CORE.LibVirt.Nefelim",   "method":"Nefelim",     "as": "Nefelim"    }
                           ]);
 
 except Exception as e:
@@ -18,9 +18,6 @@ except Exception as e:
 
 
 def main():
-
-#    globals()["logger"] = initLog(loggingLevel = logging.DEBUG, exp = __name__)
-#    print(sys.modules['__main__'].__dict__["logger"])
 
     nefelim = Nefelim()
     nefelim.Run()
