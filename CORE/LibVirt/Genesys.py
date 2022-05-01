@@ -91,7 +91,7 @@ class Genesys(VirtUtils):
         self.NETWORK_CONFIG_TPL = self.user_data_json["config"]["NETWORK_CONFIG_TPL"]
         self.VM_TEMPLATE = self.user_data_json["config"]["VM_TEMPLATE"]
         self.VMPATH = self.user_data_json["config"]["VMPATH"]
-
+        self.VMIMAGEPATH = self.user_data_json["config"]["VMIMAGEPATH"]
         self.CMD = self.user_data_json["command"]
         self.PKG = self.user_data_json["pgk"]
         self.node_ssh_key = self.user_data_json["ssh-keys"]

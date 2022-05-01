@@ -1,7 +1,7 @@
 try:
     import CORE.Core.LOADER as boot
     boot.lm(globals(),
-				"CORE.LibVirt.Nefelim", "sys", "libvirt", "subprocess"
+				"CORE.LibVirt.Nefelim", "sys", "libvirt", "subprocess", "argparse"
 				)
 
     boot.iglob(globals(),[
@@ -16,29 +16,41 @@ except Exception as e:
     import sys
     sys.exit(1)
 
+# python3 init-vm-8.py --COMMAND initVM --VMNAME node100 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 100  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND initVM --VMNAME node101 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 101  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND attachDiskVM --VMNAME node101 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 101  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND attachInerfaceVM --VMNAME node101 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 101  --EXT_DISK_SIZE  20
 
-def initVM():
+
+# python3 init-vm-8.py --COMMAND initVM --VMNAME node100 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 100  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND attachInerfaceVM --VMNAME node101 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 101  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND attachInerfaceVM --VMNAME node100 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 100  --EXT_DISK_SIZE  20
+# python3 init-vm-8.py --COMMAND attachDiskVM --VMNAME node100 --CORE 4  --MEMORY 8 --ROOTFS_SIZE 30 --octet 100  --EXT_DISK_SIZE  20
 
 
-    vm = { "VMNAME":"node100", "CORE":4, "MEMORY":8, "octet":100, "ROOTFS_SIZE":20, "EXT_DISK_SIZE":20, "USER_DATA_PATH": "CONFIG/user-data.yaml" }
+def initVM(vm: dict):
 
+
+    del vm['COMMAND']
     nefelim = Nefelim()
     nefelim.initVM( **vm )
 
 
-def attachInerfaceVM():
+def attachInerfaceVM(vm: dict):
 
-    vm = { "VMNAME":"node100", "CORE":4, "MEMORY":8, "octet":100, "ROOTFS_SIZE":20, "EXT_DISK_SIZE":20, "USER_DATA_PATH": "CONFIG/user-data.yaml" }
+    print(vm)
 
+    del vm['COMMAND']
     nefelim = Nefelim()
-
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
 
     nefelim.connectLibvirtD()
 
-    dom = nefelim.conn.lookupByName("node100")
-    docj = nefelim.vmGetJsonConfig(nefelim.conn,"node100")
+
+    VMNAME=vm["VMNAME"]
+    dom = nefelim.conn.lookupByName(VMNAME)
+    docj = nefelim.vmGetJsonConfig(nefelim.conn,VMNAME)
     docj = docj['result']
 
 
@@ -63,18 +75,16 @@ def attachInerfaceVM():
     dom.attachDeviceFlags( disk_seed, flags = libvirt.VIR_DOMAIN_AFFECT_CURRENT | libvirt.VIR_DOMAIN_AFFECT_CONFIG | libvirt.VIR_DOMAIN_AFFECT_LIVE)
 
 
-def attachDiskVM():
+def attachDiskVM(vm: dict):
 
-    vm = { "VMNAME":"node100", "CORE":4, "MEMORY":8, "octet":100, "ROOTFS_SIZE":20, "EXT_DISK_SIZE":20, "USER_DATA_PATH": "CONFIG/user-data.yaml" }
-
+    del vm['COMMAND']
     nefelim = Nefelim()
-
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
 
     nefelim.connectLibvirtD()
 
-    VMNAME="node100"
+    VMNAME=vm["VMNAME"]
 
     dom = nefelim.conn.lookupByName(VMNAME)
     docj = nefelim.vmGetJsonConfig(nefelim.conn,VMNAME)
@@ -98,15 +108,30 @@ def attachDiskVM():
     dom.attachDeviceFlags( disk_seed, flags = libvirt.VIR_DOMAIN_AFFECT_CURRENT | libvirt.VIR_DOMAIN_AFFECT_CONFIG | libvirt.VIR_DOMAIN_AFFECT_LIVE)
 
 
+def getArgs() -> dict:
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--COMMAND', help='COMMAND initVM/attachDiskVM/attachInerfaceVM  help', default='initVM', type=str)
+    parser.add_argument('--VMNAME', help='VMNAME help', default='node100', type=str)
+    parser.add_argument('--CORE', help='CORE help', default='4', type=int)
+    parser.add_argument('--MEMORY', help='MEMORY help', default='8', type=int)
+    parser.add_argument('--ROOTFS_SIZE', help='octet help', default='20', type=int)
+    parser.add_argument('--octet', help='foo help', default='100', type=int)
+    parser.add_argument('--EXT_DISK_SIZE', help='ext-disk-size help', default='20', type=int)
+    parser.add_argument('--USER_DATA_PATH', help='USER_DATA_PATH', default="CONFIG/user-data.yaml", type=str)
+
+    args = parser.parse_args()
+    print(args)
+    print(args.__dict__)
+    return vars(args)
+
 
 def main():
 
-#    globals()["logger"] = initLog(loggingLevel = logging.DEBUG, exp = __name__)
-#    print(sys.modules['__main__'].__dict__["logger"])
 
-    initVM()
-#    attachInerfaceVM()
-#    attachDiskVM()
+    cmd = { 'initVM': initVM, 'attachDiskVM': attachDiskVM, 'attachInerfaceVM': attachInerfaceVM }
+    args = getArgs()
+    cmd[args['COMMAND']](args)
+
     exit(1)
 
 if __name__ == '__main__':

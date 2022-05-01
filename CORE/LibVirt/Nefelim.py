@@ -83,7 +83,7 @@ class Nefelim(Connector):
     def createUserDataConfig(self):
 
         _,self.create_image_vm = (tmp_vars:=self.network["block"][[ i for i in copy.copy(self.network['block'])][:1].pop() ]["network"]), \
-                            [ i.format(VMNAME=self.VMNAME,octet=self.octet,network=tmp_vars,ROOTFS_SIZE=self.ROOTFS_SIZE,EXT_DISK_SIZE=self.EXT_DISK_SIZE,VMPATH=self.VMPATH ) for i in self.create_image_vm_tpl ]
+                            [ i.format(VMNAME=self.VMNAME,octet=self.octet,network=tmp_vars,ROOTFS_SIZE=self.ROOTFS_SIZE,EXT_DISK_SIZE=self.EXT_DISK_SIZE,VMPATH=self.VMPATH,VMIMAGEPATH=self.VMIMAGEPATH ) for i in self.create_image_vm_tpl ]
 
         self.IP_ADDR_200="{network}{octet}".format(network=self.network["block"][[ i for i in copy.copy(self.network['block'])][:1].pop() ]["network"],octet=self.octet)
 

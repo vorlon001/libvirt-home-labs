@@ -29,6 +29,7 @@ config:
   VM_REPO: focal
   VM_TEMPLATE: TPL/vm.template.xml
   VMPATH: '<REMOVE>'
+  VMIMAGEPATH:  '<REMOVE>'
 create-image-vm:
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
