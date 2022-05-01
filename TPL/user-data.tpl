@@ -5,10 +5,10 @@ preserve_hostname: False
 fqdn: {{VMNAME_FQDN}}
 
 users:
-  - name: ubuntu
+  - name: vorlon
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin
-    home: /home/ubuntu
+    home: /home/vorlon
     shell: /bin/bash
     lock_passwd: false
     ssh-authorized-keys:
@@ -39,7 +39,7 @@ ca-certs:
 
 chpasswd:
   list: |
-    ubuntu:ubuntu
+    vorlon:123
     root:root
   expire: false
 

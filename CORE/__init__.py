@@ -1,9 +1,9 @@
 NAME = "The Rabbit Hole V8"
-__author__ = 'KOSOV DENIS https://github.com/vorlon001'
+__author__ = 'https://github.com/vorlon001'
 __email__ = 'vorlon@iblog.pro'
 __version__ = "3.10.0"
 __license__ = """3-clause license BSD
-Copyright (c) 2014-2021, Kosov Denis
+Copyright (c) 2014-2021, vorlon001
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

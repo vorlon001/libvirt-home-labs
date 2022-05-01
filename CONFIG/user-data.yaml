@@ -11,7 +11,10 @@ command:
 - ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa  -q -P ""
 - ssh-keygen -t rsa -b 4096 -f /home/vorlon/.ssh/id_rsa  -q -P ""
 - cp /etc/netplan/50-cloud-init.yaml /etc/netplan/00-installer-config.yaml
+- echo "LANGUAGE=ru_RU:ru" > /etc/default/locale
+- echo "LANG=ru_RU.UTF-8" >> /etc/default/locale
 - touch /etc/cloud/cloud-init.disabled
+- apt update
 config:
   NETWORK_CONFIG_TPL: TPL/network-config.tpl
   NEXUS_REPO: https://archive.ubuntu.com/
@@ -25,23 +28,22 @@ config:
   VMNAME_FQDN: '{VMNAME}.cloud.local'
   VM_REPO: focal
   VM_TEMPLATE: TPL/vm.template.xml
+  VMPATH: '<REMOVE>'
 create-image-vm:
-- rm ./{VMNAME}-seed.qcow2
-- rm ./{VMNAME}.qcow2
-- qemu-img create -F qcow2 -b <REMOVE>/jammy-server-cloudimg-amd64.img -f
-  qcow2 {VMNAME}.qcow2 {ROOTFS_SIZE}G
-- cloud-localds -v --network-config=<REMOVE>/network-config.{VMNAME} <REMOVE>/node100-seed.qcow2
-  <REMOVE>/user-data.{VMNAME} <REMOVE>/meta-data
-- ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}"
+- 'rm {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
+- 'rm {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- 'qemu-img create -F qcow2 -b /cloud/TEST.1/KVM/jammy-server-cloudimg-amd64.img -f qcow2 {VMPATH}/{VMNAME}/{VMNAME}.qcow2 {ROOTFS_SIZE}G'
+- 'cloud-localds -v --network-config={VMPATH}/{VMNAME}/network-config {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2 {VMPATH}/{VMNAME}/user-data {VMPATH}/meta-data'
+- 'ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}'
 network:
   block:
     '200':
-      gateway4: 10.x.x.1
+      gateway4: x.y.z.1
       nameservers:
         ip: x.x.x.10
-        search: cloud.local
+        search: y.z
       netmask: 24
-      network: 10.x.x.
+      network: x.y.z.
   magic_mac: fa:16:3e
 pgk:
 - apt-transport-https
@@ -51,15 +53,10 @@ pgk:
 - lsb-release
 - openssh-server
 - net-tools
-- tcpdump
-- mc
-- htop
-- iotop
-- iftop
 - language-pack-ru
 - pwgen
 ssh-keys:
 - root@<REMOVE>
 vm-disk:
-- <REMOVE>/{VMNAME}.qcow2
-- <REMOVE>/{VMNAME}-seed.qcow2
+- '{VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- '{VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'

@@ -1,13 +1,15 @@
 try:
 
     import CORE.Core.LOADER as boot
-    boot.lm(globals(),"subprocess","xmltodict","libvirt","sys","time","json","ipaddress","copy","random","socket","jinja2", "pprint","CORE.Core.Warp")
+    boot.lm(globals(),"subprocess","xmltodict","libvirt","sys","time","json","ipaddress","copy","random","socket","jinja2", "pprint","CORE.Core.Warp",
+                                "CORE.Core.Logger")
     boot.iglob(globals(),[
                             { "module": "subprocess",  "method":"run"                    },
                             { "module": "subprocess",  "method":"STDOUT"                 },
                             { "module": "subprocess",  "method":"PIPE"                   },
                             { "module": "jinja2",      "method":"Template"               },
                             { "module": "pprint",      "method":"pprint",   "as": "dump" },
+                            { "module": "CORE.Core.Logger",      "method":"log"          },
                             { "module": "CORE.Core.Warp",   "method":"Decorator"         },
                             { "module": "CORE.Core.Warp",   "method":"WARP_DRIVE"        }
                           ]);
@@ -32,7 +34,7 @@ class Utils(Base):
 
     @WARP_DRIVE.decorator_void
     def timeSleep(self,sec: int = 0, message: str = ""):
-        print(f"sleep {sec}sec - {message}")
+        log(message = f"sleep {sec}sec - {message}")
         time.sleep( sec )
 
 
@@ -40,7 +42,7 @@ class Utils(Base):
     def isSshEnable(self, ipaddress: str = "127.0.0.1", port: int = 22):
         s = socket.socket()
         try:
-            print("isSshEnable TEST",ipaddress, port)
+            log(message = f"isSshEnable TEST: {ipaddress}, {port}")
             s.connect((ipaddress, port))
         except Exception as e:
             return False
@@ -53,7 +55,7 @@ class Utils(Base):
         while True:
             _,sshd_config_active = (tmp := self.isSshEnable(ipaddress=ipaddress, port=22)), tmp["result"] if tmp["code"]==200 else sys.exit(1);
             if sshd_config_active==True:
-                print("SSH on VM ENABLE", ipaddress)
+                log(message = f"SSH on VM ENABLE: {ipaddress}")
                 break
             self.timeSleep(sec=5)
 

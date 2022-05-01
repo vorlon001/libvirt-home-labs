@@ -31,7 +31,7 @@ try:
                           ]);
 
 except Exception as e:
-    print("type error: " + str(e),__file__)
+    print("type error:", str(e),__file__)
     print(e)
     import traceback
     print("INTERNAL ERROR CORE:",traceback.format_exc());
@@ -44,45 +44,51 @@ except Exception as e:
 @Decorator("decorated class Nefelim")
 class Nefelim(Connector):
 
-    def __init_subclass__(self,VMNAME: str = "node100", CORE: int = 2, MEMORY:int = 8, octet: int = 200, ROOTFS_SIZE: int = 20, EXT_DISK_SIZE: int = 20, USER_DATA_PATH: str = "CONFIG/user-data.yaml" ):
-        super(Connector,self).__init_subclass__(VMNAME,CORE,MEMORY,octet,ROOTFS_SIZE,EXT_DISK_SIZE,USER_DATA_PATH)
-
+    def __init_subclass__(self):
+        super(Connector,self).__init_subclass__()
         log(message = "Nefelim().__init__()")
 
 
     @WARP_DRIVE.decorator_void
-    def Run(self):
+    def initVM(self, VMNAME: str = "node100", CORE: int = 2, MEMORY:int = 8, octet: int = 200, ROOTFS_SIZE: int = 20, EXT_DISK_SIZE: int = 20, USER_DATA_PATH: str = "CONFIG/user-data.yaml" ):
+
 
         log(message = "Nefelim().Run()")
 
-        self.initConfig()
+        self.initConfig( VMNAME, CORE, MEMORY, octet, ROOTFS_SIZE, EXT_DISK_SIZE, USER_DATA_PATH)
 
         self.setVarConfig()
         self.loadConfig()
-        self.UserDataConfig()
-        self.NetworkConfig()
 
+        subprocess.call(f"mkdir -p {self.VMPATH}/{self.VMNAME}", shell=True)
+
+
+        log(message = "Nefelim().createUserDataConfig()")
+        self.createUserDataConfig()
+        log(message = "Nefelim().createNetworkConfig()")
+        self.createNetworkConfig()
+
+        log(message = "Nefelim().createLibvirtConfig()")
+        self.createLibvirtConfig()
         log(message = "Nefelim().LibvirtConfig()")
-        self.LibvirtConfig()
-        log(message = "Nefelim().LibvirtConfig()")
-        self.LibvirtRunVm()
-        log(message = "Nefelim().LibvirtConfig()")
-        e = self.LibvirtRunStep2Vm()
-        log(message = "Nefelim().LibvirtConfig()")
-        self.LibvirtRunStep3Vm()
+        self.initRunNewVm()
+        log(message = "Nefelim().createRunNewVMStep2()")
+        e = self.createRunNewVMStep2()
+        log(message = "Nefelim().createRunNewVMStep3()")
+        self.createRunNewVMStep3()
         log(message = "Nefelim().Run() END")
 
 
     @WARP_DRIVE.decorator_void
-    def UserDataConfig(self):
+    def createUserDataConfig(self):
 
         _,self.create_image_vm = (tmp_vars:=self.network["block"][[ i for i in copy.copy(self.network['block'])][:1].pop() ]["network"]), \
-                            [ i.format(VMNAME=self.VMNAME,octet=self.octet,network=tmp_vars,ROOTFS_SIZE=self.ROOTFS_SIZE,EXT_DISK_SIZE=self.EXT_DISK_SIZE ) for i in self.create_image_vm_tpl ]
+                            [ i.format(VMNAME=self.VMNAME,octet=self.octet,network=tmp_vars,ROOTFS_SIZE=self.ROOTFS_SIZE,EXT_DISK_SIZE=self.EXT_DISK_SIZE,VMPATH=self.VMPATH ) for i in self.create_image_vm_tpl ]
 
         self.IP_ADDR_200="{network}{octet}".format(network=self.network["block"][[ i for i in copy.copy(self.network['block'])][:1].pop() ]["network"],octet=self.octet)
 
-        print("POINT 10054", self.IP_ADDR_200 )
-        print("POINT 10055", self.create_image_vm )
+        log(message = f"POINT 10054 {self.IP_ADDR_200 }")
+        log(message = f"POINT 10055 {self.create_image_vm}")
 
         Args = {
             "sshd_config_append": self.sshd_config_append,
@@ -99,17 +105,17 @@ class Nefelim(Connector):
         }
 
         self.user_data = self.user_data_template.render( **Args )
-        self.fileWrite( "user-data.node100", self.user_data)
+        self.fileWrite( f"{self.VMPATH}/{self.VMNAME}/user-data", self.user_data)
 
 
     @WARP_DRIVE.decorator_void
-    def NetworkConfig(self):
+    def createNetworkConfig(self):
 
         _ = {    v.update({ "ipaddress": str(ipaddress.IPv4Address( f"{v['network']}{self.octet}")) }) for k,v in self.node_ip.items() }
 
         self.network_config = self.Network_Config_Template.render( node_ip = self.node_ip, INTERFACE = self.INTERFACE )
 
-        self.fileWrite( "network-config.node100", self.network_config )
+        self.fileWrite( f"{self.VMPATH}/{self.VMNAME}/network-config", self.network_config )
 
 
     @WARP_DRIVE.decorator_void
@@ -120,40 +126,39 @@ class Nefelim(Connector):
         self.doc['domain']['name']=self.VMNAME
 
         for count, path in enumerate(self.vm_disk):
-            print("DEBUG 10105", count, path )
+            log(message = f"DEBUG 10105, {count}, {path}")
             self.doc['domain']['devices']['disk'][count]["source"]["@file"]=path
 
         for count, mac in enumerate(self.INTERFACE):
-            print("DEBUG 10106", count, mac["mac"] )
+            log(message = f"DEBUG 10106, {count}, {mac['mac']}")
             self.doc['domain']['devices']['interface'][count]['mac']['@address']=mac["mac"]
 
 
     @WARP_DRIVE.decorator_void
-    def LibvirtConfig(self):
+    def createLibvirtConfig(self):
 
-        _ = [ (print("POINT 12000",i),(returned_value:=subprocess.call(i, shell=True)),print('returned value:', returned_value)) for i in self.create_image_vm ]
+        _ = [ (log(message = f"POINT 12000 {i}"),(returned_value:=subprocess.call(i, shell=True)),log(message = f"returned value: {returned_value}")) for i in self.create_image_vm ]
 
         self.createXML()
 
-        print(self.doc)
-        dump(self.doc)
+        log(message = f"{self.doc}")
 
-        print("create xml config")
+        log(message = "create xml config")
         self.xml_cfg = xmltodict.unparse(self.doc, pretty=True)
-        print("save xml config")
+        log(message = "save xml config")
 
-        self.fileWrite( "node100.xml", self.xml_cfg)
+        self.fileWrite( f"{self.VMPATH}/{self.VMNAME}/{self.VMNAME}.xml", self.xml_cfg)
 
 
     @WARP_DRIVE.decorator_void
-    def LibvirtRunStep2Vm(self):
+    def createRunNewVMStep2(self):
 
         # -----------------------------
 
-        print("waiting for the cloud init settings")
+        log(message = "waiting for the cloud init settings")
         self.getStatusVmgetStatusShutDown()
 
-        print("init start VM")
+        log(message = "init start VM")
         #l(conn,"node100").create()
         self.vmCreate(self.conn,self.VMNAME)
 
@@ -165,13 +170,13 @@ class Nefelim(Connector):
 
         self.dom = self.vmInfo(self.conn,self.VMNAME)
         if self.dom == None:
-            print('Failed to get the domain object', file=sys.stderr)
+            log(message = f"Failed to get the domain object, file={sys.stderr}")
             exit(1)
 
         self.disk_seed="""
 <disk type="file" device="disk">
         <driver name="qemu" type="raw"></driver>
-        <source file="/cloud/TEST.1/KVM/{VMNAME}-seed.qcow2"></source>
+        <source file="/cloud/TEST.1/KVM/{VMNAME}/{VMNAME}-seed.qcow2"></source>
         <target dev="vda" bus="virtio"></target>
 </disk>
 """
@@ -186,15 +191,15 @@ class Nefelim(Connector):
 
 
     @WARP_DRIVE.decorator_void
-    def LibvirtRunStep3Vm(self):
+    def createRunNewVMStep3(self):
         # -----------------------------
-        print("init shutdown  VM - LibvirtRunStep3Vm")
+        log(message = "init shutdown  VM - LibvirtRunStep3Vm")
         #l(conn,"node100").shutdown()
         self.vmShutdown(self.conn,self.VMNAME)
         # -----------------------------
         self.getStatusVmgetStatusShutDown()
         # -----------------------------
-        print("init start VM")
+        log(message = "init start VM")
         #l(conn,"node100").create()
         self.vmCreate(self.conn,self.VMNAME)
         # -----------------------------
@@ -210,20 +215,20 @@ class Nefelim(Connector):
         self.timeSleep(sec=20, message="sleep 20sec")
         # -----------------------------
 
-        print(self.vmInfo(self.conn,self.VMNAME))
+        log(message = f"{self.vmInfo(self.conn,self.VMNAME)}")
         self.cmd = [ i.format(self.ipaddress) for i in self.user_data_json["after-deploy"] ]
         dump( self.cmd)
         for i in self.cmd:
             returned_value = subprocess.call(i, shell=True)
-            print('returned value:', returned_value)
-            print( self.vmInfo(self.conn,self.VMNAME))
+            log(message = f"returned value: {returned_value}")
+            log(message = f"{self.vmInfo(self.conn,self.VMNAME)}")
         # -----------------------------
-        print("init shutdown  VM")
+        log(message = "init shutdown  VM")
         self.vmShutdown(self.conn,self.VMNAME)
         # -----------------------------
         self.getStatusVmgetStatusShutDown()
         # -----------------------------
-        print("init start VM")
+        log(message = "init start VM")
         log(message = "Nefelim().self.getStatusVmgetStatusRunning 5")
         self.vmCreate(self.conn,self.VMNAME)
         # -----------------------------

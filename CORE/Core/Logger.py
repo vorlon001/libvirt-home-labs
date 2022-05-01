@@ -31,9 +31,10 @@ def initLog(loggingLevel: int = logging.DEBUG, exp: str = __name__) -> Optional[
         logging.critical(e)
         return None
 
+
 sys.modules['__main__'].__dict__["logger"] = initLog(loggingLevel = logging.DEBUG, exp = __name__)
 sys.modules['__main__'].__dict__["DEBUG_MODE"] = False
-
+sys.modules['__main__'].__dict__["UUID_LOG"] = False
 
 def log(message: str = "", exception=None, exception_traceback=None):
 #, type_message: str ="DEBUG", show_stacks: bool  = False, show_code_context: bool = False, exception=None, exception_traceback=None):
@@ -41,17 +42,19 @@ def log(message: str = "", exception=None, exception_traceback=None):
     logger = sys.modules['__main__'].__dict__["logger"]
 
     DEBUG_MODE = sys.modules['__main__'].DEBUG_MODE
+    UUID_LOG = sys.modules['__main__'].UUID_LOG
 
-    id_log = uuid.uuid4()
+    id_log = "uuid: {uuid.uuid4()}, " if sys.modules['__main__'].__dict__["UUID_LOG"]==True else ""
+
     stacks = inspect.stack()
     cf = inspect.currentframe()
     if DEBUG_MODE==True:
-        logger.debug(f"LOGGER: uuid: {id_log}, {stacks[1][1]}:{cf.f_back.f_lineno}, message: {message}")
+        logger.debug(f"LOGGER: uuid: {id_log}{stacks[1][1]}:{cf.f_back.f_lineno}, message: {message}")
     else:
-        logger.info(f"LOGGER: uuid: {id_log}, {stacks[1][1]}:{cf.f_back.f_lineno}, message: {message}")
+        logger.info(f"LOGGER: uuid: {id_log}{stacks[1][1]}:{cf.f_back.f_lineno}, message: {message}")
     if exception is not None:
-        logger.debug(f"LOGGER: {{ uuid: {id_log}, FileName: {exception.__traceback__.tb_frame.f_code.co_filename} }}")
-        logger.debug(f"LOGGER: {{ uuid: {id_log}, lineno: {exception.__traceback__.tb_lineno} }}")
+        logger.debug(f"LOGGER: {{ uuid: {id_log}FileName: {exception.__traceback__.tb_frame.f_code.co_filename} }}")
+        logger.debug(f"LOGGER: {{ uuid: {id_log}lineno: {exception.__traceback__.tb_lineno} }}")
         f = exception.__traceback__.tb_frame
         h =  inspect.getframeinfo( f )
         args, _, _, values = inspect.getargvalues(f)
@@ -61,9 +64,9 @@ def log(message: str = "", exception=None, exception_traceback=None):
         for i in range(1,len(stacks)):
             stack = stacks[i]
             if DEBUG_MODE==True:
-                logger.debug(f"STACK: {{ uuid: {id_log}, filename: {stack.filename}: function: {stack.function}: lineno:{stack.lineno}: code_context:{stack.code_context} }}")
+                logger.debug(f"STACK: {{ uuid: {id_log}filename: {stack.filename}: function: {stack.function}: lineno:{stack.lineno}: code_context:{stack.code_context} }}")
             else:
-                logger.debug(f"STACK: {{ uuid: {id_log}, filename: {stack.filename}: function: {stack.function}: lineno:{stack.lineno} }}")
+                logger.debug(f"STACK: {{ uuid: {id_log}filename: {stack.filename}: function: {stack.function}: lineno:{stack.lineno} }}")
         z = inspect.stack()
         for i in range(1,len(z)):
             f = z[i].frame
