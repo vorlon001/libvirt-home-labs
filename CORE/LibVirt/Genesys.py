@@ -97,6 +97,8 @@ class Genesys(VirtUtils):
         self.node_ssh_key = self.user_data_json["ssh-keys"]
         self.network = self.user_data_json["network"]
 
+        self.STEP2 = self.user_data_json["config"].get("STEP2",True)
+        self.STEP3 = self.user_data_json["config"].get("STEP3",True)
 
 
     @WARP_DRIVE.decorator_void

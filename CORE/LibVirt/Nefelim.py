@@ -73,9 +73,11 @@ class Nefelim(Connector):
         log(message = "Nefelim().LibvirtConfig()")
         self.initRunNewVm()
         log(message = "Nefelim().createRunNewVMStep2()")
-        e = self.createRunNewVMStep2()
+        if self.STEP2 == True:
+            e = self.createRunNewVMStep2()
         log(message = "Nefelim().createRunNewVMStep3()")
-        self.createRunNewVMStep3()
+        if self.STEP3 == True:
+            self.createRunNewVMStep3()
         log(message = "Nefelim().Run() END")
 
 
@@ -90,6 +92,8 @@ class Nefelim(Connector):
         log(message = f"POINT 10054 {self.IP_ADDR_200 }")
         log(message = f"POINT 10055 {self.create_image_vm}")
 
+        _ = {    v.update({ "octet": self.octet, "ipaddress": str(ipaddress.IPv4Address( f"{v['network']}{self.octet}")) }) for k,v in self.node_ip.items() }
+
         Args = {
             "sshd_config_append": self.sshd_config_append,
             "pip_conf_append": self.pip_conf_append,
@@ -101,6 +105,8 @@ class Nefelim(Connector):
             "VMNAME": self.VMNAME,
             "VMNAME_FQDN": self.VMNAME_FQDN,
             "VM_REPO": self.VM_REPO,
+            "INTERFACE": self.INTERFACE,
+            "node_ip": self.node_ip,
             "root_cert_append": self.root_cert_append
         }
 
