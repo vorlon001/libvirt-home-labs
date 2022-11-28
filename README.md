@@ -4,6 +4,13 @@ V20
 
 
 
+pip3 freeze > requirements.txt
+pip3 install -r requirements.txt
+
+
+
+
+
 need create libvirt network
 need wget jammy cloud image
 
