@@ -32,17 +32,17 @@ config:
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
   USER_DATA_TPL_PATH: TPL/user-data.tpl
   VMNAME_FQDN: '{VMNAME}.cloud.local'
-  VM_REPO: jammy
+  VM_REPO: focal
   VM_TEMPLATE: TPL/vm.template.xml
-  VMPATH: '<CLOUD_SOURCE_IMAGE>/kvm_examples.v20'
-  VMIMAGEPATH: '<CLOUD_IMG>'
+  VMPATH: '<CLOUD_IMG>/kvm_examples.v20'
+  VMIMAGEPATH: '<CLOUD_SOURCE_IMAGE>'
   STEP2: True
   STEP3: True
 create-image-vm:
 - 'mkdir -p {VMPATH}/{VMNAME}'
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
-- 'cp {VMIMAGEPATH}/jammy-server-cloudimg-amd64.img {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- 'cp {VMIMAGEPATH}/focal-server-cloudimg-amd64.img {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
 - 'qemu-img resize {VMPATH}/{VMNAME}/{VMNAME}.qcow2 {ROOTFS_SIZE}G'
 - 'touch {VMPATH}/{VMNAME}/meta-data'
 - 'cloud-localds -v --network-config={VMPATH}/{VMNAME}/network-config {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2 {VMPATH}/{VMNAME}/user-data {VMPATH}/{VMNAME}/meta-data'

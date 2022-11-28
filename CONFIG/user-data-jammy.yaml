@@ -1,12 +1,8 @@
 after-deploy:
-- 'PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-  pdsh -R ssh -w root@{} "echo ''datasource_list: [ None ]'' | sudo -s tee /etc/cloud/cloud.cfg.d/90_dpkg.cfg"'
-- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-  pdsh -R ssh -w root@{} "sudo apt-get purge -y cloud-init"
-- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-  pdsh -R ssh -w root@{} "sudo rm -rf /etc/cloud/; sudo rm -rf /var/lib/cloud/"
-- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-  pdsh -R ssh -w root@{} "rm /etc/netplan/50-cloud-init.yaml"
+- 'PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" pdsh -R ssh -w root@{} "echo ''datasource_list: [ None ]'' | sudo -s tee /etc/cloud/cloud.cfg.d/90_dpkg.cfg"'
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"  pdsh -R ssh -w root@{} "sudo apt-get purge -y cloud-init"
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"  pdsh -R ssh -w root@{} "sudo rm -rf /etc/cloud/; sudo rm -rf /var/lib/cloud/"
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"  pdsh -R ssh -w root@{} "rm /etc/netplan/50-cloud-init.yaml"
 command:
 - systemctl disable systemd-udevd.service
 - ssh-keygen -A
@@ -34,8 +30,8 @@ config:
   VMNAME_FQDN: '{VMNAME}.cloud.local'
   VM_REPO: jammy
   VM_TEMPLATE: TPL/vm.template.xml
-  VMPATH: '<CLOUD_SOURCE_IMAGE>/kvm_examples.v20'
-  VMIMAGEPATH: '<CLOUD_IMG>'
+  VMPATH: '<CLOUD_IMG>/kvm_examples.v20'
+  VMIMAGEPATH: '<CLOUD_SOURCE_IMAGE>'
   STEP2: True
   STEP3: True
 create-image-vm:

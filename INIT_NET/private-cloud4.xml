@@ -1,0 +1,11 @@
+<network>
+ <name>cloud4</name>
+ <forward mode='bridge'/>
+ <bridge name='sw1'/>
+  <portgroup name='vlan800' default='yes'>
+    <vlan>
+      <tag id='800'/>
+    </vlan>
+  </portgroup>
+<virtualport type='openvswitch'/>
+</network>

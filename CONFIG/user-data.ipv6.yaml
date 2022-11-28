@@ -5,6 +5,8 @@ after-deploy:
   pdsh -R ssh -w root@{} "sudo apt-get purge -y cloud-init"
 - PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   pdsh -R ssh -w root@{} "sudo rm -rf /etc/cloud/; sudo rm -rf /var/lib/cloud/"
+- PDSH_SSH_ARGS_APPEND="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  pdsh -R ssh -w root@{} "rm /etc/netplan/50-cloud-init.yaml"
 command:
 - systemctl disable systemd-udevd.service
 - ssh-keygen -A
@@ -14,39 +16,63 @@ command:
 - echo "LANGUAGE=ru_RU:ru" > /etc/default/locale
 - echo "LANG=ru_RU.UTF-8" >> /etc/default/locale
 - touch /etc/cloud/cloud-init.disabled
+- echo "deb https://<MIRROR>/apt.kubernetes.io/ kubernetes-xenial
+  main" >> /etc/apt/sources.list
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o
+  /usr/share/keyrings/docker-archive-keyring.gpg
+- curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 - apt update
 config:
   NETWORK_CONFIG_TPL: TPL/network-config.tpl
-  NEXUS_REPO: https://archive.ubuntu.com/
-  NEXUS_REPO_SEC: https://security.ubuntu.com
+  NEXUS_REPO: https://<MIRROR>/archive.ubuntu.com/
+  NEXUS_REPO_SEC: https://<MIRROR>/security.ubuntu.com/
   PIP_TPL_PATH: TPL/pip-conf.tpl
   ROOT_CERT_PATH: CERT/root.iblog.pro.crt
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
-  USER_DATA_PATH: JSON/user-data.json
   USER_DATA_TPL_PATH: TPL/user-data.tpl
   VMNAME_FQDN: '{VMNAME}.cloud.local'
-  VM_REPO: focal
+  VM_REPO: jammy
   VM_TEMPLATE: TPL/vm.template.xml
-  VMPATH: '<REMOVE>'
-  VMIMAGEPATH:  '<REMOVE>'
+  VMPATH: '<CLOUD_IMG>/kvm_examples.v20'
+  VMIMAGEPATH: '<CLOUD_SOURCE_IMAGE>'
+  STEP2: True
+  STEP3: True
 create-image-vm:
+- 'mkdir -p {VMPATH}/{VMNAME}'
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
 - 'rm {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
-- 'qemu-img create -F qcow2 -b /cloud/TEST.1/KVM/jammy-server-cloudimg-amd64.img -f qcow2 {VMPATH}/{VMNAME}/{VMNAME}.qcow2 {ROOTFS_SIZE}G'
-- 'cloud-localds -v --network-config={VMPATH}/{VMNAME}/network-config {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2 {VMPATH}/{VMNAME}/user-data {VMPATH}/meta-data'
-- 'ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}'
+- 'cp {VMIMAGEPATH}/jammy-server-cloudimg-amd64.img {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- 'qemu-img resize {VMPATH}/{VMNAME}/{VMNAME}.qcow2 {ROOTFS_SIZE}G'
+- 'touch {VMPATH}/{VMNAME}/meta-data'
+- 'cloud-localds -v --network-config={VMPATH}/{VMNAME}/network-config {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2 {VMPATH}/{VMNAME}/user-data {VMPATH}/{VMNAME}/meta-data'
+- 'ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}"'
 network:
   block:
     '200':
-      gateway4: x.y.z.1
+      gateway4: 192.168.200.1
       nameservers:
-        ip: x.x.x.10
-        search: y.z
+        ip: 192.168.1.10
+        search: cloud.local
       netmask: 24
-      network: x.y.z.
+      network: 192.168.200.
       netmask6: 64
-      network6: "2001:x:y:z::"
+      network6: "2001:db8:200:1234::"
+    '400':
+      netmask: 24
+      network: 192.168.201.
+      netmask6: 64
+      network6: "2001:db8:400:1234::"
+    '600':
+      netmask: 24
+      network: 192.168.202.
+      netmask6: 64
+      network6: "2001:db8:600:1234::"
+    '800':
+      netmask: 24
+      network: 192.168.203.
+      netmask6: 64
+      network6: "2001:db8:800:1234::"
   magic_mac: fa:16:3e
 pgk:
 - apt-transport-https
@@ -56,10 +82,19 @@ pgk:
 - lsb-release
 - openssh-server
 - net-tools
+- tcpdump
+- mc
+- htop
+- iotop
+- iftop
 - language-pack-ru
 - pwgen
+- net-tools
 ssh-keys:
-- root@<REMOVE>
+- root@node4
+- root@node2
+- root@node3
+- root@node1
 vm-disk:
 - '{VMPATH}/{VMNAME}/{VMNAME}.qcow2'
 - '{VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
