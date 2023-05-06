@@ -1,5 +1,5 @@
 [global]
 timeout=360
-index-url=https://<YOUR PIP PROXY>/pip/simple/
-index=https://<YOUR PIP PROXY>/pip/
+index-url=https://<REMOVE>/repository/pip/simple/
+index=https://<REMOVE>/repository/pip/
 cert=/etc/ssl/certs/ca-certificates.crt

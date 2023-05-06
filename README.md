@@ -1,6 +1,6 @@
 # Create VM libvirt on python 
 
-V20
+V25
 
 
 
@@ -71,3 +71,119 @@ python3 ./run.vm.py --COMMAND listInterfaceVM --VMNAME node170 --CORE 4  --MEMOR
 
 ```
 
+
+
+
+
+```
+apt-get install openvswitch-switch
+```
+
+
+# n1
+```
+ovs-vsctl del-br sw1
+systemctl restart ovs-vswitchd.service
+systemctl restart ovsdb-server.service
+ovs-vsctl add-br sw1
+```
+
+# ovs-vsctl add-port sw1 internalPort1 -- set interface internalPort1 type=internal
+# ifconfig internalPort1 12.101.0.1/24  up
+
+```
+ovs-vsctl del-port sw1 tun8
+ovs-vsctl del-port sw1 tun10
+
+ovs-vsctl add-port sw1 tun8 -- set interface tun8 type=vxlan options:remote_ip=192.168.1.20   options:key=234234 mtu_request=4000
+ovs-vsctl add-port sw1 tun10 -- set interface tun10 type=vxlan options:remote_ip=192.168.1.30   options:key=234234 mtu_request=4000
+
+sudo ovs-vsctl del-port sw1 tun8
+sudo ovs-vsctl del-port sw1 tun10
+ovs-vsctl add-port sw1 tun8 -- set interface tun8 type=geneve options:remote_ip=192.168.1.20   options:key=234234 mtu_request=4000
+ovs-vsctl add-port sw1 tun10 -- set interface tun10 type=geneve options:remote_ip=192.168.1.30   options:key=234234 mtu_request=4000
+
+
+ovs-vsctl add-port sw1 vlan200 tag=200 --\
+                set interface vlan200 type=internal
+
+ip addr add 192.168.93.10/24 dev vlan200
+ip link set vlan200 up
+
+ovs-vsctl add-port sw1 vlan400 tag=400 --\
+                set interface vlan400 type=internal
+
+ip addr add 192.168.94.10/24 dev vlan400
+ip link set vlan400 up
+
+ovs-vsctl set Bridge sw1 rstp_enable=true
+ovs-vsctl set Bridge sw1 stp_enable=false
+
+ovs-vsctl del-port sw1 vlan600
+ovs-vsctl add-port sw1 vlan600 tag=600 --\
+                set interface vlan600 type=internal mtu_request=4000
+
+
+ovs-vsctl del-port sw1 vlan800
+ovs-vsctl add-port sw1 vlan800 tag=800 --\
+                set interface vlan800 type=internal mtu_request=4000
+
+```
+
+
+
+
+
+# n2
+```
+ovs-vsctl del-br sw1
+systemctl restart ovs-vswitchd.service
+systemctl restart ovsdb-server.service
+ovs-vsctl add-br sw1
+```
+# ovs-vsctl add-port sw1 internalPort1 -- set interface internalPort1 type=internal
+# ifconfig internalPort1 12.101.0.2/24  up
+```
+sudo ovs-vsctl add-port sw1 tun8 -- set interface tun8 type=vxlan options:remote_ip=192.168.1.10  options:key=234234 mtu_request=4000
+sudo ovs-vsctl add-port sw1 tun9 -- set interface tun9 type=vxlan options:remote_ip=192.168.1.30  options:key=234234 mtu_request=4000
+
+sudo ovs-vsctl del-port sw1 tun8
+sudo ovs-vsctl del-port sw1 tun9
+sudo ovs-vsctl add-port sw1 tun8 -- set interface tun8 type=geneve options:remote_ip=192.168.1.10  options:key=234234 mtu_request=4000
+sudo ovs-vsctl add-port sw1 tun9 -- set interface tun9 type=geneve options:remote_ip=192.168.1.30  options:key=234234 mtu_request=4000
+
+ovs-vsctl del-port sw1 vlan200
+ovs-vsctl add-port sw1 vlan200 tag=200 --\
+                set interface vlan200 type=internal mtu_request=4000
+
+
+ip addr add 192.168.93.20/24 dev vlan200
+ip link set vlan200 up
+
+ovs-vsctl del-port sw1 vlan400
+ovs-vsctl add-port sw1 vlan400 tag=400 --\
+                set interface vlan400 type=internal mtu_request=4000
+ovs-vsctl set int sw1 mtu_request=4000
+
+ip addr add 192.168.94.20/24 dev vlan400
+ip link set vlan400 up
+
+ping  -M do -s 3900 192.168.200.2
+
+
+ovs-vsctl set Bridge sw1 rstp_enable=true
+ovs-vsctl set Bridge sw1 stp_enable=false
+
+ovs-appctl rstp/show
+
+
+ovs-vsctl del-port sw1 vlan600
+ovs-vsctl add-port sw1 vlan600 tag=600 --\
+                set interface vlan600 type=internal mtu_request=4000
+
+
+ovs-vsctl del-port sw1 vlan800
+ovs-vsctl add-port sw1 vlan800 tag=800 --\
+                set interface vlan800 type=internal mtu_request=4000
+
+```

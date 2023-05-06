@@ -16,7 +16,7 @@ command:
 - echo "LANGUAGE=ru_RU:ru" > /etc/default/locale
 - echo "LANG=ru_RU.UTF-8" >> /etc/default/locale
 - touch /etc/cloud/cloud-init.disabled
-- echo "deb https://<MIRROR>/apt.kubernetes.io/ kubernetes-xenial
+- echo "deb https://<REMOVE>/repository/apt.kubernetes.io/ kubernetes-xenial
   main" >> /etc/apt/sources.list
 - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o
   /usr/share/keyrings/docker-archive-keyring.gpg
@@ -24,18 +24,18 @@ command:
 - apt update
 config:
   NETWORK_CONFIG_TPL: TPL/network-config.tpl
-  NEXUS_REPO: https://<MIRROR>/archive.ubuntu.com/
-  NEXUS_REPO_SEC: https://<MIRROR>/security.ubuntu.com/
+  NEXUS_REPO: https://<REMOVE>/repository/archive.ubuntu.com/
+  NEXUS_REPO_SEC: https://<REMOVE>/repository/security.ubuntu.com/
   PIP_TPL_PATH: TPL/pip-conf.tpl
-  ROOT_CERT_PATH: CERT/root.iblog.pro.crt
+  ROOT_CERT_PATH: CERT/<REMOVE>
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
   USER_DATA_TPL_PATH: TPL/user-data.tpl
   VMNAME_FQDN: '{VMNAME}.cloud.local'
   VM_REPO: focal
   VM_TEMPLATE: TPL/vm.template.xml
-  VMPATH: '<CLOUD_IMG>/kvm_examples.v20'
-  VMIMAGEPATH: '<CLOUD_SOURCE_IMAGE>'
+  VMPATH: '/cloud/KVM/kvm_examples.v20'
+  VMIMAGEPATH: '/KVM/IMAGES'
   STEP2: True
   STEP3: True
 create-image-vm:

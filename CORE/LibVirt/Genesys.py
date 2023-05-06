@@ -79,6 +79,7 @@ class Genesys(VirtUtils):
     def setVarConfig(self):
         log(message = "Genesys().setVarConfig()")
 
+        self.PREFIX_NETWORK = self.user_data_json["config"]["PREFIX"] if "PREFIX" in self.user_data_json["config"] else None
         self.VMNAME_FQDN = self.user_data_json["config"]["VMNAME_FQDN"].format(VMNAME = self.VMNAME)
         self.VM_REPO = self.user_data_json["config"]["VM_REPO"]
         self.NEXUS_REPO = self.user_data_json["config"]["NEXUS_REPO"]
@@ -165,7 +166,10 @@ class Genesys(VirtUtils):
         self.vm_disk_tpl = self.user_data_json["vm-disk"]
         self.vm_disk = [ i.format(VMPATH=self.VMPATH,VMNAME=self.VMNAME)for i in self.vm_disk_tpl ]
         # 10
-        self.network_interface = ["enp1s0","enp2s0"]
+        if self.PREFIX_NETWORK!=None:
+            self.network_interface = [f"{self.PREFIX}0",f"{self.PREFIX}1"]
+        else:
+            self.network_interface = ["enp1s0","enp2s0"]
         self.INTERFACE = [ {'name': i, 'mac': self.random_mac(self.network)["result"]   } for i in self.network_interface ]
         # 11
         self.node_ip = copy.deepcopy(self.network["block"])

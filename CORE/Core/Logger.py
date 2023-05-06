@@ -34,6 +34,7 @@ def initLog(loggingLevel: int = logging.DEBUG, exp: str = __name__) -> Optional[
 
 sys.modules['__main__'].__dict__["logger"] = initLog(loggingLevel = logging.DEBUG, exp = __name__)
 sys.modules['__main__'].__dict__["DEBUG_MODE"] = False
+sys.modules['__main__'].__dict__["DEBUG_DUMP_MODE"] = False
 sys.modules['__main__'].__dict__["UUID_LOG"] = False
 
 def log(message: str = "", exception=None, exception_traceback=None):
@@ -44,7 +45,7 @@ def log(message: str = "", exception=None, exception_traceback=None):
     DEBUG_MODE = sys.modules['__main__'].DEBUG_MODE
     UUID_LOG = sys.modules['__main__'].UUID_LOG
 
-    id_log = "uuid: {uuid.uuid4()}, " if sys.modules['__main__'].__dict__["UUID_LOG"]==True else ""
+    id_log = f"uuid: {uuid.uuid4()}, " if sys.modules['__main__'].__dict__["UUID_LOG"]==True else ""
 
     stacks = inspect.stack()
     cf = inspect.currentframe()

@@ -26,17 +26,17 @@ class Decorator(object):
     def __call__(self, cls):
         class Wrapped(cls):
             def __setattr__(self, name, value):
-                _ = Dump(id=41, dump={ "name": name, "value": value}, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                _ = Dump(id=41, dump={ "name": name, "value": value}, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                 self.__dict__[name] = value
 
             def __getattr__(self, name):
                 print(name)
-                _ =Dump(id=51, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                _ =Dump(id=51, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                 if name in self.__dict__['other_class']:
-                    Dump(id=52, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                    Dump(id=52, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                     return self.__dict__['other_class'][name]
                 elif name in self.__dict__:
-                    Dump(id=52, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                    Dump(id=52, dump={ "name": name }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                     return self.__dict__[name]
                 return None
 
@@ -44,11 +44,11 @@ class Decorator(object):
                 attr = object.__getattribute__(self, name)
                 if hasattr(attr, '__call__'):
                     def newfunc(*args, **kwargs):
-                        Dump(id=31, dump={ "data": 'before calling %s' %attr.__name__ , "kwargs": kwargs }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                        Dump(id=31, dump={ "data": 'before calling %s' %attr.__name__ , "kwargs": kwargs }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
 
                         result = attr(*args, **kwargs)
 
-                        Dump(id=32, dump={ "result": result, "data": 'done calling %s' %attr.__name__ , "kwargs": kwargs}, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                        Dump(id=32, dump={ "result": result, "data": 'done calling %s' %attr.__name__ , "kwargs": kwargs}, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                         return result
 
                     return newfunc
@@ -56,13 +56,13 @@ class Decorator(object):
                     return attr
 
             def __get__(self, instance, owner):
-                Dump(id=21, dump={ "instance":instance, "owner": owner }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                Dump(id=21, dump={ "instance":instance, "owner": owner }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
                 return 'Экземпляр %s, класс %s' % (instance, owner)
 
             def __init__(self, **cls):
                 self.other_class = cls
                 super(Wrapped, self).__init__(**cls)
-                Dump(id=100, dump={ "cls": self.other_class }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_MODE ==True else None
+                Dump(id=100, dump={ "cls": self.other_class }, from_class=self, f_code=sys._getframe(), stack=inspect.stack()) if sys.modules['__main__'].DEBUG_DUMP_MODE ==True else None
 
         return Wrapped
 

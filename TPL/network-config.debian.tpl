@@ -19,6 +19,10 @@ config:
     - type: static
       address: {{item['ipaddress']}}
       netmask: 255.255.255.0
+      dns_nameservers:
+        - 192.168.1.10
+      search:
+        - cloud.local
 {% if 'gateway4' in item %}      routes:
       - network: 0.0.0.0
         netmask: 0.0.0.0

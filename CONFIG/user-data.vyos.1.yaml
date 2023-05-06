@@ -1,0 +1,53 @@
+after-deploy: []
+command: []
+config:
+  NETWORK_CONFIG_TPL: TPL/network-config.vyos.tpl
+  NEXUS_REPO: https://<REMOVE>/repository/deb.debian.org/debian
+  NEXUS_REPO_SEC: https://<REMOVE>/repository/deb.debian.org/debian-security
+  PIP_TPL_PATH: TPL/pip-conf.tpl
+  ROOT_CERT_PATH: CERT/<REMOVE>.crt
+  SSD_TPL_PATH: TPL/sshd-config.tpl
+  SSH_AUTH_KEYS: /root/.ssh/authorized_keys
+  USER_DATA_TPL_PATH: TPL/user-data.vyos.tpl
+  VMNAME_FQDN: '{VMNAME}.cloud.local'
+  VM_REPO: bullseye
+  VM_TEMPLATE: TPL/vm.template.xml
+  VMPATH: '/cloud/KVM/kvm_examples.v20'
+  VMIMAGEPATH: '/KVM/IMAGES'
+  STEP2: False
+  STEP3: False
+  PREFIX: 'eth'
+create-image-vm:
+- 'mkdir -p {VMPATH}/{VMNAME}'
+- 'rm {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'
+- 'rm {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- 'cp {VMIMAGEPATH}/vyos-1.4.0-07112022-amd64.qcow2 {VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- 'qemu-img resize {VMPATH}/{VMNAME}/{VMNAME}.qcow2 {ROOTFS_SIZE}G'
+- 'touch {VMPATH}/{VMNAME}/meta-data'
+- 'cp {VMPATH}/{VMNAME}/user-data {VMPATH}/{VMNAME}/vyos-user-data'
+- 'cloud-localds -v --network-config={VMPATH}/{VMNAME}/network-config {VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2 {VMPATH}/{VMNAME}/vyos-user-data {VMPATH}/{VMNAME}/meta-data'
+- 'ssh-keygen -f "/root/.ssh/known_hosts" -R "{network}{octet}"'
+network:
+  block:
+    '200':
+      gateway4: 192.168.200.1
+      nameservers:
+        ip: 192.168.1.10
+        search: cloud.local
+      netmask: 24
+      network: 192.168.200.
+    '400':
+      netmask: 24
+      network: 192.168.201.
+    '600':
+      netmask: 24
+      network: 192.168.202.
+    '800':
+      netmask: 24
+      network: 192.168.203.
+  magic_mac: fa:16:3e
+pgk: []
+ssh-keys: []
+vm-disk:
+- '{VMPATH}/{VMNAME}/{VMNAME}.qcow2'
+- '{VMPATH}/{VMNAME}/{VMNAME}-seed.qcow2'

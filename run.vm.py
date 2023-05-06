@@ -1,10 +1,14 @@
 try:
     import CORE.Core.LOADER as boot
     boot.lm(globals(),
-				"CORE.LibVirt.Nefelim", "sys", "libvirt", "subprocess", "argparse"
+				"CORE.LibVirt.Nefelim", "sys", "libvirt", "subprocess", "argparse", "asyncio", "copy", "multiprocessing"
 				)
 
+
+#from multiprocessing import Process
+
     boot.iglob(globals(),[
+                            { "module": "multiprocessing",   "method":"Process",     "as": "Process"    },
                             { "module": "CORE.LibVirt.Nefelim",   "method":"Nefelim",     "as": "Nefelim"    }
                           ]);
 
@@ -58,9 +62,33 @@ def initVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initVM( **vm )
+
+
+def initVMs(vm: dict):
+
+    procs = []
+    proc = Process(target=initVM)  # instantiating without any argument
+    procs.append(proc)
+    proc.start()
+
+    for i in range(vm["octet"],vm["octet"]+vm["numvm"]):
+        vmTmp = copy.deepcopy(vm)
+        vmTmp["VMNAME"] = f"{vm['VMNAME']}{i}"
+        vmTmp["octet"] = i
+        print(vmTmp)
+
+        # print(name)
+        proc = Process(target=initVM, args=(vmTmp,))
+        procs.append(proc)
+        proc.start()
+
+    # complete the processes
+    for proc in procs:
+        proc.join()
 
 
 def attachInerfaceVM(vm: dict):
@@ -70,6 +98,7 @@ def attachInerfaceVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
@@ -110,6 +139,7 @@ def attachDiskVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
@@ -147,6 +177,7 @@ def destroyVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
@@ -174,6 +205,7 @@ def listDiskVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
@@ -196,6 +228,7 @@ def listInterfaceVM(vm: dict):
     del vm['COMMAND']
     del vm['virtual_network_vlan_id']
     del vm['virtual_network_bridge_name']
+    del vm["numvm"]
 
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
@@ -215,6 +248,8 @@ def listInterfaceVM(vm: dict):
 
 def createNetworkVlan(vm: dict):
     del vm['COMMAND']
+    del vm["numvm"]
+
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
@@ -258,6 +293,8 @@ def createNetworkVlan(vm: dict):
 def destroyNetworkVlan(vm: dict):
 
     del vm['COMMAND']
+    del vm["numvm"]
+
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
@@ -294,6 +331,8 @@ def destroyNetworkVlan(vm: dict):
 
 def createNetworkTrunk(vm: dict):
     del vm['COMMAND']
+    del vm["numvm"]
+
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
@@ -331,6 +370,8 @@ def createNetworkTrunk(vm: dict):
 def destroyNetworkTrunk(vm: dict):
 
     del vm['COMMAND']
+    del vm["numvm"]
+
     nefelim = Nefelim()
     nefelim.initConfig( **vm )
     nefelim.setVarConfig()
@@ -360,7 +401,7 @@ def destroyNetworkTrunk(vm: dict):
 
 def getArgs() -> dict:
     parser = argparse.ArgumentParser()
-    parser.add_argument('--COMMAND', help='COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM/listInterfaceVM/listDiskVM', default='initVM', type=str)
+    parser.add_argument('--COMMAND', help='COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM/listInterfaceVM/listDiskVM/initVMs', default='initVM', type=str)
     parser.add_argument('--VMNAME', help='VMNAME for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM/listInterfaceVM/listDiskVM', default='node100', type=str)
     parser.add_argument('--CORE', help='CORE for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM', default='4', type=int)
     parser.add_argument('--MEMORY', help='MEMORY for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM', default='8', type=int)
@@ -368,7 +409,7 @@ def getArgs() -> dict:
     parser.add_argument('--octet', help='octet for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM', default='100', type=int)
     parser.add_argument('--EXT_DISK_SIZE', help='ext-disk-size for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM', default='20', type=int)
     parser.add_argument('--USER_DATA_PATH', help='USER_DATA_PATH for COMMAND initVM/attachDiskVM/attachInerfaceVM/destroyVM', default="CONFIG/user-data.yaml", type=str)
-
+    parser.add_argument('--numvm', help='num vm, default 1', default='1', type=int)
     parser.add_argument('--virtual_network_vlan_id', help='virtual_network_vlan_id for COMMAND createNetworkVlan/destroyNetworkVlan/createNetworkTrunk/destroyNetworkTrunk', default=0, type=int)
     parser.add_argument('--virtual_network_bridge_name', help='virtual_network_bridge_name for COMMAND createNetworkVlan/destroyNetworkVlan/createNetworkTrunk/destroyNetworkTrunk', default="sw1", type=str)
 
@@ -384,7 +425,7 @@ def main():
 #    print(sys.modules['__main__'].__dict__["logger"])
 
     cmd = {
-              'initVM': initVM, "destroyVM": destroyVM,
+              'initVMs':initVMs, 'initVM': initVM, "destroyVM": destroyVM,
               'attachDiskVM': attachDiskVM,
               'attachInerfaceVM': attachInerfaceVM,
               "listDiskVM": listDiskVM, "listInterfaceVM": listInterfaceVM,
