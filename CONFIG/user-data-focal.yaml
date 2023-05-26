@@ -23,6 +23,9 @@ command:
 - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 - apt update
 config:
+  INTERFACE_INIT:
+  - enp1s0
+  - enp2s0
   NETWORK_CONFIG_TPL: TPL/network-config.tpl
   NEXUS_REPO: https://<REMOVE>/repository/archive.ubuntu.com/
   NEXUS_REPO_SEC: https://<REMOVE>/repository/security.ubuntu.com/

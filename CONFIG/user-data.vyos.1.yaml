@@ -1,6 +1,9 @@
 after-deploy: []
 command: []
 config:
+  INTERFACE_INIT:
+  - enp1s0
+  - enp2s0
   NETWORK_CONFIG_TPL: TPL/network-config.vyos.tpl
   NEXUS_REPO: https://<REMOVE>/repository/deb.debian.org/debian
   NEXUS_REPO_SEC: https://<REMOVE>/repository/deb.debian.org/debian-security

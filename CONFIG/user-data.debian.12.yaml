@@ -14,6 +14,9 @@ command:
 - echo "LANG=ru_RU.UTF-8" >> /etc/default/locale
 - touch /etc/cloud/cloud-init.disabled
 config:
+  INTERFACE_INIT:
+  - enp1s0
+  - enp2s0
   NETWORK_CONFIG_TPL: TPL/network-config.debian.tpl
   NEXUS_REPO: https://<REMOVE>/repository/deb.debian.org/debian
   NEXUS_REPO_SEC: https://<REMOVE>/repository/deb.debian.org/debian-security

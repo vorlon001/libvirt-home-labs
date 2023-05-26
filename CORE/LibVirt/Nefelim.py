@@ -135,9 +135,18 @@ class Nefelim(Connector):
             log(message = f"DEBUG 10105, {count}, {path}")
             self.doc['domain']['devices']['disk'][count]["source"]["@file"]=path
 
-        for count, mac in enumerate(self.INTERFACE):
-            log(message = f"DEBUG 10106, {count}, {mac['mac']}")
-            self.doc['domain']['devices']['interface'][count]['mac']['@address']=mac["mac"]
+        if len(self.INTERFACE)>1:
+            for count, mac in enumerate(self.INTERFACE):
+                log(message = f"DEBUG 10107, {count}, {mac['mac']}")
+                log(message = f"DEBUG 10108, {self.doc['domain']['devices']['interface'][count]}")
+                log(message = f"DEBUG 10109, {self.doc['domain']['devices']['interface'][count]['mac']['@address']}")
+                self.doc['domain']['devices']['interface'][count]['mac']['@address']=mac["mac"]
+                log(message = f"DEBUG 10110, {self.doc['domain']['devices']['interface'][count]}")
+        elif len(self.INTERFACE)==1:
+                log(message = f"DEBUG 10110, {self.doc['domain']['devices']['interface']} -> {self.INTERFACE} -> {self.INTERFACE[0]['mac']}")
+                self.doc['domain']['devices']['interface']['mac']['@address'] = self.INTERFACE[0]['mac']
+                log(message = f"DEBUG 10110, {self.doc['domain']['devices']['interface']}")
+
 
 
     @WARP_DRIVE.decorator_void

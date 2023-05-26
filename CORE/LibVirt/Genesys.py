@@ -97,6 +97,7 @@ class Genesys(VirtUtils):
         self.PKG = self.user_data_json["pgk"]
         self.node_ssh_key = self.user_data_json["ssh-keys"]
         self.network = self.user_data_json["network"]
+        self.INTERFACE_INIT = self.user_data_json["config"]["INTERFACE_INIT"]
 
         self.STEP2 = self.user_data_json["config"].get("STEP2",True)
         self.STEP3 = self.user_data_json["config"].get("STEP3",True)
@@ -169,8 +170,27 @@ class Genesys(VirtUtils):
         if self.PREFIX_NETWORK!=None:
             self.network_interface = [f"{self.PREFIX}0",f"{self.PREFIX}1"]
         else:
-            self.network_interface = ["enp1s0","enp2s0"]
+            self.network_interface = self.INTERFACE_INIT #["enp1s0","enp2s0"]
+            print("="*40)
+            print("="*40)
+            print(self.network_interface)
+            print("-"*40)
+            print(self.INTERFACE_INIT)
+            print("-"*40)
+            print(self.user_data_json["config"]["INTERFACE_INIT"])
+            print("="*40)
+            print("="*40)
+
         self.INTERFACE = [ {'name': i, 'mac': self.random_mac(self.network)["result"]   } for i in self.network_interface ]
+
+        print("="*40)
+        print("="*40)
+        print(self.INTERFACE)
+        print("-"*40)
+        print(self.INTERFACE_INIT)
+        print("="*40)
+        print("="*40)
+
         # 11
         self.node_ip = copy.deepcopy(self.network["block"])
         # 12
