@@ -1,8 +1,8 @@
 #cloud-config
-hostname: {{VMNAME}}
+hostname: {{.VMNAME}}
 manage_etc_hosts: true
 preserve_hostname: False
-fqdn: {{VMNAME_FQDN}}
+fqdn: {{.VMNAME_FQDN}}
 
 users:
   - name: vorlon
@@ -11,31 +11,31 @@ users:
     home: /home/vorlon
     shell: /bin/bash
     lock_passwd: false
-    ssh-authorized-keys:
-{% for item in SSHKEY[:-1] %}     - {{ item }}
-{% endfor %}     - {{SSHKEY[-1:].pop()}}
+    ssh-authorized-keys:{{range $key, $element := .SSHKeys }}
+     - {{ $element }}{{end}}
 
 ssh_pwauth: true
 disable_root: false
 
+
 apt:
   sources_list: |
-    deb {{NEXUS_REPO}} {{VM_REPO}} main restricted
-    deb {{NEXUS_REPO}} {{VM_REPO}}-updates main restricted
-    deb {{NEXUS_REPO}} {{VM_REPO}} universe
-    deb {{NEXUS_REPO}} {{VM_REPO}}-updates universe
-    deb {{NEXUS_REPO}} {{VM_REPO}} multiverse
-    deb {{NEXUS_REPO}} {{VM_REPO}}-updates multiverse
-    deb {{NEXUS_REPO}} {{VM_REPO}}-backports main restricted universe multiverse
-    deb {{NEXUS_REPO_SEC}} {{VM_REPO}}-security main restricted
-    deb {{NEXUS_REPO_SEC}} {{VM_REPO}}-security universe
-    deb {{NEXUS_REPO_SEC}} {{VM_REPO}}-security multiverse
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}} main restricted
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-updates main restricted
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}} universe
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-updates universe
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}} multiverse
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-updates multiverse
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-backports main restricted universe multiverse
+    deb {{.Config.NEXUSREPOSEC}} {{.Config.VMREPO}}-security main restricted
+    deb {{.Config.NEXUSREPOSEC}} {{.Config.VMREPO}}-security universe
+    deb {{.Config.NEXUSREPOSEC}} {{.Config.VMREPO}}-security multiverse
 
 ca-certs:
   remove-defaults: false
   trusted:
-  - |
-{{root_cert_append}}
+  - |{{range $key, $element := .ReadFromFile "TPL/root.iblog.pro.crt" }}
+     {{ $element }}{{end}}
 
 chpasswd:
   list: |
@@ -43,18 +43,16 @@ chpasswd:
     root:root
   expire: false
 
+
 write_files:
- - content: |
-{% for item in SSHKEY[:-1] %}    {{ item }}
-{% endfor %}    {{SSHKEY[-1:].pop()}}
+ - content: |{{range $key, $element := .SSHKeys }}
+    {{ $element }}{{end}}
    path: /root/.ssh/authorized_keys
- - content: |
-{% for item in sshd_config_append[:-1] %}    {{ item }}
-{% endfor %}    {{sshd_config_append[-1:].pop()}}
+ - content: |{{range $key, $element := .ReadFromFile "TPL/sshd-config.tpl" }}
+    {{ $element }}{{end}}
    path: /etc/ssh/sshd_config
- - content: |
-{% for item in pip_conf_append[:-1] %}    {{ item }}
-{% endfor %}    {{pip_conf_append[-1:].pop()}}
+ - content: |{{range $key, $element := .ReadFromFile "TPL/pip-conf.tpl" }}
+    {{ $element }}{{end}}
    path: /etc/pip.conf
 
 ntp:
@@ -74,16 +72,14 @@ timezone: Asia/Yekaterinburg
 package_update: true
 package_upgrade: true
 
-packages:
-{% for item in PKG[:-1] %}  - {{ item }}
-{% endfor %}  - {{PKG[-1:].pop()}}
+packages:{{range $key, $element := .Pgk }}
+  - {{ $element }}{{end}}
 
 output:
   all: ">> /var/log/cloud-init.log"
 
-runcmd:
-{% for item in CMD[:-1] %}  - {{ item }}
-{% endfor %}  - {{CMD[-1:].pop()}}
+runcmd:{{range $key, $element := .Command }}
+  - {{ $element }}{{end}}
 
 final_message: "The system is finally up, after $UPTIME seconds"
 

@@ -1,7 +1,0 @@
-<network connections='3'>
-  <name>macvtap-net</name>
-  <uuid>c0c7b690-5cab-437c-96f2-b8fa4a3d6115</uuid>
-  <forward dev='ens33' mode='bridge'>
-    <interface dev='ens33' connections='3'/>
-  </forward>
-</network>

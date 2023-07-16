@@ -1,0 +1,58 @@
+version: 2
+ethernets:
+    enp1s0:
+        dhcp4: false
+        dhcp6: false
+        match:
+            macaddress: fa:16:3e:62:7b:5a
+            name: enp*s0
+        set-name: enp1s0
+    enp2s0:
+        dhcp4: false
+        dhcp6: false
+        match:
+            macaddress: fa:16:3e:4a:fe:91
+            name: enp*s0
+        set-name: enp2s0
+vlans:
+
+    enp1s0.200:
+        id: 200
+        link: enp1s0
+        addresses:
+        - 192.168.200.180/24
+        dhcp4: false
+        dhcp6: false
+        gateway4: 192.168.200.1
+        nameservers:
+            addresses:
+            - 192.168.1.10
+            search:
+            - cloud.local
+    enp1s0.400:
+        id: 400
+        link: enp1s0
+        addresses:
+        - 192.168.201.180/24
+        dhcp4: false
+        dhcp6: false
+
+
+    enp1s0.600:
+        id: 600
+        link: enp1s0
+        addresses:
+        - 192.168.202.180/24
+        dhcp4: false
+        dhcp6: false
+
+
+    enp1s0.800:
+        id: 800
+        link: enp1s0
+        addresses:
+        - 192.168.203.180/24
+        dhcp4: false
+        dhcp6: false
+
+
