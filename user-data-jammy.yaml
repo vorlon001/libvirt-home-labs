@@ -22,10 +22,10 @@ config:
     - name: enp1s0
     - name: enp2s0
   NETWORK_CONFIG_TPL: TPL/network-config.tpl
-  NEXUS_REPO: https://nexus3.iblog.pro/repository/archive.ubuntu.com/
-  NEXUS_REPO_SEC: https://nexus3.iblog.pro/repository/security.ubuntu.com/
+  NEXUS_REPO: https:/archive.ubuntu.com/
+  NEXUS_REPO_SEC: https://security.ubuntu.com/
   PIP_TPL_PATH: TPL/pip-conf.tpl
-  ROOT_CERT_PATH: CERT/root.iblog.pro.crt
+  ROOT_CERT_PATH: CERT/root.x.x.x
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
   USER_DATA_TPL_PATH: TPL/user-data.tpl

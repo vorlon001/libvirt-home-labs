@@ -34,7 +34,7 @@ apt:
 ca-certs:
   remove-defaults: false
   trusted:
-  - |{{range $key, $element := .ReadFromFile "TPL/root.iblog.pro.crt" }}
+  - |{{range $key, $element := .ReadFromFile "TPL/root.x.x.x" }}
      {{ $element }}{{end}}
 
 chpasswd:
