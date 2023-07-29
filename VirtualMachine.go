@@ -4,14 +4,121 @@ import (
 
 	"fmt"
 	"time"
-
+        "strconv"
         "io/ioutil"
+        "encoding/xml"
 
         "github.com/digitalocean/go-libvirt"
         "github.com/digitalocean/go-libvirt/socket/dialers"
 
         "github.com/sirupsen/logrus"
 )
+
+
+
+func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
+        core := Singleton[Core]()
+	log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineState Run with args")
+	Virtinit().VirtualMachineState(core.VMid)
+
+        doms, err := Virtinit().Libvirt.Domains()
+        if err != nil {
+                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                return
+        }
+
+        for _,j := range doms {
+                if j.Name == core.VMid {
+
+                        domainGetXMLDesc, err := Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        if err != nil {
+                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                return
+                        }
+
+                        t := Domain{}
+                        xml.Unmarshal([]byte(domainGetXMLDesc), &t)
+			log.Info("--------------------------------------------------")
+                        for k,v := range t.Devices.Disk {
+				log.WithFields(logrus.Fields{	"key": k, "v.Type": v.Type, "v.Device": v.Device, "v.Source.File": v.Source.File,
+								"v.Target.Dev": v.Target.Dev, "v.Target.Bus": v.Target.Bus, }).Info("RootSubCmdvirtualMachineState")
+				log.Info("=========================================================")
+                        }
+			log.Info("--------------------------------------------------")
+                        for _, v := range t.Devices.Interface {
+                                log.WithFields(logrus.Fields{ "v.Type": v.Type,}).Info("VM interface id")
+                                log.WithFields(logrus.Fields{ "v.Mac.Address": v.Mac.Address,}).Info("VM Interface.Type")
+                                log.WithFields(logrus.Fields{ "v.Source.Network": v.Source.Network,}).Info("VM Interface.Mac.Address")
+                                log.WithFields(logrus.Fields{ "v.Model.Type": v.Model.Type,}).Info("VM Interface.Source.Network")
+                                log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Model.Type")
+                                log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Address.Type")
+                                log.WithFields(logrus.Fields{ "v.Address.Domain": v.Address.Domain,}).Info("VM Interface.Address.Domain")
+                                log.WithFields(logrus.Fields{ "v.Address.Bus": v.Address.Bus,}).Info("VM Interface.Address.Bus")
+                                log.WithFields(logrus.Fields{ "v.Address.Slot": v.Address.Slot,}).Info("VM Interface.Address.Slot")
+                                log.WithFields(logrus.Fields{ "v.Address.Function": v.Address.Function,}).Info("VM Interface.Address.Function")
+                                log.WithFields(logrus.Fields{ "v.Address.Multifunction": v.Address.Multifunction,}).Info("VM Interface.Address.Multifunction")
+				log.Info("=========================================================")
+                        }
+			log.Info("--------------------------------------------------")
+                }
+        }
+}
+
+func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
+
+        core := Singleton[Core]()
+        log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
+
+        domains, err := ret.Libvirt.Domains()
+        if err != nil {
+            log.Fatalf("failed to retrieve domains: %v", err)
+        }
+
+        fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
+        fmt.Printf("---------------------------------------------------------------------------------------------------------------------------------\n")
+        for _, d := range domains {
+                a, _ := ret.Libvirt.DomainState(d.Name)
+                c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
+                fmt.Printf("%#v\n",d);
+                fmt.Printf("%d\t%s\t%#s\n", d.ID, d.Name, DomainState[c])
+        }
+
+        flags := libvirt.MigrateLive |
+		            libvirt.MigratePeer2peer |
+		            libvirt.MigratePersistDest |
+		            libvirt.MigrateChangeProtection |
+		            libvirt.MigrateAbortOnError |
+		            libvirt.MigrateAutoConverge |
+		            libvirt.MigrateNonSharedDisk
+
+        dom, err := ret.Libvirt.DomainLookupByName(core.VMid)
+        if err != nil {
+            log.Fatalf("failed to lookup domain: %v", err)
+        }
+        dconnuri := []string{ fmt.Sprintf("qemu+ssh://root@%s/system",core.ToMove)}
+        if e, err := ret.Libvirt.DomainMigratePerform3Params( dom, dconnuri,
+                                                              []libvirt.TypedParam{}, []byte{}, flags); err != nil {
+		    log.Fatalf("unexpected live migration error: %v", err)
+        } else {
+            fmt.Printf("%#v\n",e);
+        }
+
+        domains, err = ret.Libvirt.Domains()
+        if err != nil {
+                log.Fatalf("failed to retrieve domains: %v", err)
+        }
+
+        fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
+        fmt.Printf("---------------------------------------------------------------------------------------------------------------------------------\n")
+        for _, d := range domains {
+                a, _ := ret.Libvirt.DomainState(d.Name)
+                c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
+                fmt.Printf("%#v\n",d);
+                fmt.Printf("%d\t%s\t%x\t%#s\n", d.ID, d.Name, d.UUID, DomainState[c])
+        }
+
+
+}
 
 
 // VirtualMachineState returns current state of a virtual machine.
