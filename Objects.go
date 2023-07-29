@@ -51,6 +51,7 @@ type VirtualMachine struct {
 
 
 type Config struct {
+	IMAGENAME	 string   `yaml:"IMAGENAME"`
         INTERFACEINIT    []InterfaceName `yaml:"INTERFACE_INIT"`
         NETWORKCONFIGTPL string   `yaml:"NETWORK_CONFIG_TPL"`
         NEXUSREPO        string   `yaml:"NEXUS_REPO"`
@@ -65,8 +66,11 @@ type Config struct {
         VMTEMPLATE       string   `yaml:"VM_TEMPLATE"`
         VMPATH           string   `yaml:"VMPATH"`
         VMIMAGEPATH      string   `yaml:"VMIMAGEPATH"`
-        STEP2            bool     `yaml:"STEP2"`
-        STEP3            bool     `yaml:"STEP3"`
+	CDDiskTemplate        string   `yaml:"CDDiskTemplate"`
+	SCSIDiskTemplate      string   `yaml:"SCSIDiskTemplate"`
+	E1000Networkemplate   string   `yaml:"E1000Networkemplate"`
+
+
 }
 
 type Nameservers struct {
@@ -138,6 +142,7 @@ type Core struct {
 	NumVM		int
 
 	VMid		string
+	ToMove		string
 	XmlTemplate	string
 	myMapFlag1 int
 	myMapFlag2 string

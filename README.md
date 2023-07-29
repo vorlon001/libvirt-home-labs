@@ -1,32 +1,103 @@
 
+Version: 31.6.0
 
-base on https://habr.com/ru/companies/ruvds/articles/684300/
 
+# example MachineMigrate
 
 ```shell
 
-./main LibVirt MachineState --id node190
+root@node1:/KVM/init.kvm.v30# ./Cobra help
+INFO[2023-07-29T18:39:05+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:8 main.VersionBuild() https://github.com/vorlon001, (C) Vorlon001   Version=31.5.0
+INFO[2023-07-29T18:39:05+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:9 main.VersionBuild() HomeLabs LibVirt Connector (Golang version)
+Usage:
+  HomeLabs [command]
 
-./main Configure initVM --CORE 4 --EXT_DISK_SIZE 30 --MEMORY 4096 --Octet 180 --ROOTFS_SIZE 30 --USER_DATA_PATH user-data-jammy.yaml  --VMNAME node180
-./main Configure destroyVM --VMNAME node180
+Available Commands:
+  Configure   Configure VM command
+  LibVirt     LibVirt commands
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
 
-./main Configure attachDiskVM --CORE 4 --EXT_DISK_SIZE 30 --MEMORY 4096 --Octet 180 --ROOTFS_SIZE 30 --USER_DATA_PATH user-data-jammy.yaml  --VMNAME node180
-./main Configure detachDiskVM --VMNAME node180 --DetachDisk sdb --USER_DATA_PATH user-data-jammy.yaml
+Flags:
+  -h, --help   help for HomeLabs
 
-./main Configure attachInerfaceVM --CORE 4 --EXT_DISK_SIZE 30 --MEMORY 4096 --Octet 180 --ROOTFS_SIZE 30 --USER_DATA_PATH user-data-jammy.yaml  --VMNAME node180
-./main Configure detachInerfaceVM  --USER_DATA_PATH user-data-jammy.yaml  --VMNAME node180 --NetworkSlot "0x04"
+Use "HomeLabs [command] --help" for more information about a command.
+root@node1:/KVM/init.kvm.v30# ./Cobra LibVirt -h
+INFO[2023-07-29T18:39:06+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:8 main.VersionBuild() https://github.com/vorlon001, (C) Vorlon001   Version=31.5.0
+INFO[2023-07-29T18:39:06+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:9 main.VersionBuild() HomeLabs LibVirt Connector (Golang version)
+LibVirt commands
 
-./main LibVirt MachineDestroy --id node180
+Usage:
+  HomeLabs LibVirt [sub] [flags]
+  HomeLabs LibVirt [command]
 
-./main LibVirt MachineCreate --xml  /cloud/KVM/kvm_examples.v20/node180/vm.xml
-./main LibVirt MachineStart --id node180
+Available Commands:
+  MachineCreate     creates a new machine. Requires --xml parameter. Returns result with a current machine state
+  MachineDelete     deletes an existing machine.
+  MachineDestroy    Destroy an existing machine.
+  MachineHardReboot sends a VM into hard-reset mode. This is damaging to all ongoing file operations.
+  MachineMigrate    Migrate up a VM. Returns result with a current machine state
+  MachinePause      stops the execution of the VM. CPU is not used, but memory is still occupied.
+  MachineResume     called after Pause, to resume the invocation of the VM. Returns result with a current machine state
+  MachineShutdown   gracefully shuts down the VM. Returns result with a current machine state
+  MachineShutoff    kills running VM. Equivalent to pulling a plug out of a computer. Returns result with a current machine state
+  MachineSoftReboot reboots a machine gracefully, as chosen by hypervisor. Returns result with a current machine state
+  MachineStart      starts up a VM. Returns result with a current machine state
+  MachineState      Returns result with a current machine state
 
-./main LibVirt MachineShutoff --id node180
-./main LibVirt MachineDelete --id node180
+Flags:
+  -h, --help   help for LibVirt
 
-https://stackoverflow.com/questions/10200178/call-a-method-from-a-go-template
+Use "HomeLabs LibVirt [command] --help" for more information about a command.
 
-//***************************************************************************************
 
-./main.2 Configure sub1 -c 5 -m 4096
+root@node1:/KVM/init.kvm.v30# ./Cobra LibVirt MachineMigrate -h
+INFO[2023-07-29T18:39:37+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:8 main.VersionBuild() https://github.com/vorlon001, (C) Vorlon001   Version=31.5.0
+INFO[2023-07-29T18:39:37+05:00]/KVM/init.kvm.v30/src/VersionBuild.go:9 main.VersionBuild() HomeLabs LibVirt Connector (Golang version)
+Migrate up a VM. Returns result with a current machine state
+
+Usage:
+  HomeLabs LibVirt MachineMigrate [--id vmname!] [flags]
+
+Flags:
+  -h, --help        help for MachineMigrate
+      --id string   Libvirt VMname
+      --to string   Libvirt Move to HyperVisor
+root@node1:/KVM/init.kvm.v30#
+
+
+root@node3:/KVM/init.kvm.v30# ./Cobra LibVirt MachineMigrate  --id node189 --to 192.168.1.40
+INFO[2023-07-29T13:47:39Z]/KVM/init.kvm.v30/src/VersionBuild.go:8 main.VersionBuild() https://github.com/vorlon001, (C) Vorlon001   Version=31.5.0
+INFO[2023-07-29T13:47:39Z]/KVM/init.kvm.v30/src/VersionBuild.go:9 main.VersionBuild() HomeLabs LibVirt Connector (Golang version)
+INFO[2023-07-29T13:47:39Z]/KVM/init.kvm.v30/src/CobraMenu.go:109 main.(*CobraMenu).RootSubCmdvirtualMachineMigrate.func1() Inside RootSubCmdvirtualMachineStart Run with args  args="[]" core.VMid=node189
+INFO[2023-07-29T13:47:39Z]/KVM/init.kvm.v30/src/CobraMenu.go:110 main.(*CobraMenu).RootSubCmdvirtualMachineMigrate.func1() Inside RootSubCmdvirtualMachineStart Run with args  args="[]" core.toMove=192.168.1.40
+ID      Name            UUID                            Status
+---------------------------------------------------------------------------------------------------------------------------------
+libvirt.Domain{Name:"node189", UUID:libvirt.UUID{0x76, 0x34, 0xe2, 0xf4, 0xf0, 0x33, 0x4d, 0x96, 0xb5, 0xf9, 0xe7, 0xa, 0x6e, 0xd6, 0x29, 0xe2}, ID:1}
+1       node189 DomainRunning
+[]byte(nil)
+ID      Name            UUID                            Status
+---------------------------------------------------------------------------------------------------------------------------------
+libvirt.Domain{Name:"node189", UUID:libvirt.UUID{0x76, 0x34, 0xe2, 0xf4, 0xf0, 0x33, 0x4d, 0x96, 0xb5, 0xf9, 0xe7, 0xa, 0x6e, 0xd6, 0x29, 0xe2}, ID:-1}
+-1      node189 7634e2f4f0334d96b5f9e70a6ed629e2        DomainShutoff
+
+
+
+root@node4:/KVM/init.kvm.v30# ./Cobra LibVirt MachineMigrate  --id node189 --to 192.168.1.30
+INFO[2023-07-29T13:48:55Z]/KVM/init.kvm.v30/src/VersionBuild.go:8 main.VersionBuild() https://github.com/vorlon001, (C) Vorlon001   Version=31.5.0
+INFO[2023-07-29T13:48:55Z]/KVM/init.kvm.v30/src/VersionBuild.go:9 main.VersionBuild() HomeLabs LibVirt Connector (Golang version)
+INFO[2023-07-29T13:48:55Z]/KVM/init.kvm.v30/src/CobraMenu.go:109 main.(*CobraMenu).RootSubCmdvirtualMachineMigrate.func1() Inside RootSubCmdvirtualMachineStart Run with args  args="[]" core.VMid=node189
+INFO[2023-07-29T13:48:55Z]/KVM/init.kvm.v30/src/CobraMenu.go:110 main.(*CobraMenu).RootSubCmdvirtualMachineMigrate.func1() Inside RootSubCmdvirtualMachineStart Run with args  args="[]" core.toMove=192.168.1.30
+ID      Name            UUID                            Status
+---------------------------------------------------------------------------------------------------------------------------------
+libvirt.Domain{Name:"node189", UUID:libvirt.UUID{0x76, 0x34, 0xe2, 0xf4, 0xf0, 0x33, 0x4d, 0x96, 0xb5, 0xf9, 0xe7, 0xa, 0x6e, 0xd6, 0x29, 0xe2}, ID:1}
+1       node189 DomainRunning
+[]byte(nil)
+ID      Name            UUID                            Status
+---------------------------------------------------------------------------------------------------------------------------------
+libvirt.Domain{Name:"node189", UUID:libvirt.UUID{0x76, 0x34, 0xe2, 0xf4, 0xf0, 0x33, 0x4d, 0x96, 0xb5, 0xf9, 0xe7, 0xa, 0x6e, 0xd6, 0x29, 0xe2}, ID:-1}
+-1      node189 7634e2f4f0334d96b5f9e70a6ed629e2        DomainShutoff
+root@node4:/KVM/init.kvm.v30#
+
 ```
+

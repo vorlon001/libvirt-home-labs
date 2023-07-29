@@ -40,6 +40,12 @@ func initCoreCobra() {
                                                         core := Singleton[Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
+                                                    SubMenu{ Name: "RootSubCmdvirtualMachineMigrate",
+                                                    Run: func(c *cobra.Command) {
+                                                        core := Singleton[Core]()
+                                                        c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
+                                                        c.PersistentFlags().StringVarP(&core.ToMove, "to", "", "","Libvirt Move to HyperVisor")
+                                                    }},
                                                     SubMenu{ Name: "RootSubCmdvirtualMachineSoftReboot",
                                                     Run: func(c *cobra.Command) {
                                                         core := Singleton[Core]()

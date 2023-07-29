@@ -8,6 +8,16 @@ import (
 var log *logrus.Logger
 
 
+var DomainState = map[int]string{
+					0: "DomainNostate",
+					1: "DomainRunning",
+					2: "DomainBlocked",
+					3: "DomainPaused",
+					4: "DomainShutdown",
+					5: "DomainShutoff",
+					6: "DomainCrashed",
+					7: "DomainPmsuspended" }
+
 
 
 var cache sync.Map
@@ -50,27 +60,29 @@ const (
         VirtualMachineStatusOff          = VirtualMachineStatus("off")
         VirtualMachineStatusShuttingDown = VirtualMachineStatus("shutting_down")
 
-
+/*
 	CDDiskTemplate = `
 <disk type="file" device="disk">
         <driver name="qemu" type="raw"></driver>
         <source file="%s"></source>
         <target dev="vda" bus="virtio"></target>
 </disk>`
+*/
 
-	SCSIDiskTemplate = `<disk type="file" device="disk">
+/*	SCSIDiskTemplate = `<disk type="file" device="disk">
         <driver name='qemu' type='qcow2'/>
         <source file="{{.Config.VMPATH}}/{{.VMNAME}}/{{.VMNAME}}-disk{{.DISKID}}.qcow2"></source>
         <target dev='{{.DISKID}}' bus='scsi'/>
 </disk>`
-
+*/
+/*
 	E1000Networkemplate = `<interface type='network'>
       <source network='cloud_sw1'/>
       <model type='e1000'/>
       <mac address='{{.MacAddress}}'/>
       <address type='pci' domain='0x0000' bus='0x03' slot='{{.Slot}}' function='0x0' multifunction='on'/>
 </interface>`
-
+*/
 
 
 

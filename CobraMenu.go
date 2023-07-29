@@ -98,6 +98,72 @@ func (f *CobraMenu) RootSubCmdvirtualMachineState() *cobra.Command {
         return subvirtualMachineState
 }
 
+
+
+func (f *CobraMenu) RootSubCmdvirtualMachineMigrate() *cobra.Command {
+  var subvirtualMachineMigrate = &cobra.Command{
+    Use:   "MachineMigrate [--id vmname!]",
+    Short: "Migrate up a VM. Returns result with a current machine state",
+    Run: func(cmd *cobra.Command, args []string) {
+        core := Singleton[Core]()
+        log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
+        log.WithFields(logrus.Fields{ "core.toMove": core.ToMove, "args": args,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
+        Virt := Virtinit().Libvirt
+
+        domains, err := Virt.Domains()
+        if err != nil {
+            log.Fatalf("failed to retrieve domains: %v", err)
+        }
+
+        fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
+        fmt.Printf("---------------------------------------------------------------------------------------------------------------------------------\n")
+        for _, d := range domains {
+                a, _ := Virt.DomainState(d.Name)
+                c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
+                fmt.Printf("%#v\n",d);
+                fmt.Printf("%d\t%s\t%#s\n", d.ID, d.Name, DomainState[c])
+        }
+
+        flags := libvirt.MigrateLive |
+		            libvirt.MigratePeer2peer |
+		            libvirt.MigratePersistDest |
+		            libvirt.MigrateChangeProtection |
+		            libvirt.MigrateAbortOnError |
+		            libvirt.MigrateAutoConverge |
+		            libvirt.MigrateNonSharedDisk
+
+        dom, err := Virt.DomainLookupByName(core.VMid)
+        if err != nil {
+            log.Fatalf("failed to lookup domain: %v", err)
+        }
+        dconnuri := []string{ fmt.Sprintf("qemu+ssh://root@%s/system",core.ToMove)}
+        if e, err := Virt.DomainMigratePerform3Params( dom, dconnuri,
+                                                    []libvirt.TypedParam{}, []byte{}, flags); err != nil {
+		    log.Fatalf("unexpected live migration error: %v", err)
+        } else {
+            fmt.Printf("%#v\n",e);
+        }
+
+        domains, err = Virt.Domains()
+        if err != nil {
+                log.Fatalf("failed to retrieve domains: %v", err)
+        }
+
+        fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
+        fmt.Printf("---------------------------------------------------------------------------------------------------------------------------------\n")
+        for _, d := range domains {
+                a, _ := Virt.DomainState(d.Name)
+                c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
+                fmt.Printf("%#v\n",d);
+                fmt.Printf("%d\t%s\t%x\t%#s\n", d.ID, d.Name, d.UUID, DomainState[c])
+        }
+
+    },
+  }
+        return subvirtualMachineMigrate
+}
+
+
 func (f *CobraMenu) RootSubCmdvirtualMachineSoftReboot() *cobra.Command {
   var subvirtualMachineSoftReboot = &cobra.Command{
     Use:   "MachineSoftReboot [--id vmname!]",
@@ -270,16 +336,6 @@ func initVM(increment int) {
         core = Singleton[Core]()
         Virtinit().VirtualMachineState(c.VMNAME)
 
-	var DomainState = map[int]string{
-        	0: "DomainNostate",
-	        1: "DomainRunning",
-	        2: "DomainBlocked",
-	        3: "DomainPaused",
-	        4: "DomainShutdown",
-	        5: "DomainShutoff",
-	        6: "DomainCrashed",
-	        7: "DomainPmsuspended" }
-
 	stop := 0
 	for stop==0 {
 
@@ -355,7 +411,14 @@ func initVM(increment int) {
 	for _,j := range doms {
 		if j.Name == c.VMNAME {
 			dom := j
-			disk_seed := fmt.Sprintf(CDDiskTemplate,c.VMDisk[1].Path)
+
+                        CDDiskTemplate, err := c.ReadFile( &c.Config.CDDiskTemplate)
+                        if err != nil {
+                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                return
+                        }
+
+			disk_seed := fmt.Sprintf(*CDDiskTemplate,c.VMDisk[1].Path)
 			log.WithFields(logrus.Fields{ "VMName": c.VMNAME, "XML": disk_seed,}).Info("VM change")
 			err = Virtinit().Libvirt.DomainDetachDeviceFlags(dom, disk_seed, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
 			if err != nil {
@@ -509,7 +572,14 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
 			c.DISKID = SearchDisk(useDisk)
 			c.EXT_DISK_SIZE = core.EXT_DISK_SIZE
 
-			renderXML, err := templateRender(SCSIDiskTemplate, *c)
+			SCSIDiskTemplate, err := c.ReadFile( &c.Config.SCSIDiskTemplate)
+                        if err != nil {
+                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                return
+                        }
+
+
+			renderXML, err := templateRender( *SCSIDiskTemplate, *c)
 			if err != nil {
 				log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachDiskVM")
 				return
@@ -596,7 +666,13 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
 
                         c.DISKID = core.DetachDiskName
 
-                        renderXML, err := templateRender(SCSIDiskTemplate, *c)
+                        SCSIDiskTemplate, err := c.ReadFile( &c.Config.SCSIDiskTemplate)
+                        if err != nil {
+                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                return
+                        }
+
+                        renderXML, err := templateRender( *SCSIDiskTemplate, *c)
                         if err != nil {
                                 log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachDiskVM")
                                 return
@@ -689,7 +765,13 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
 			interfaceVM.Slot = fmt.Sprintf("0x%02x",  freePciSlot)
 			fmt.Printf("%s\n", interfaceVM.Slot)
 
-                        renderInterface, err := templateRender( E1000Networkemplate, interfaceVM)
+                        E1000Networkemplate, err := c.ReadFile( &c.Config.E1000Networkemplate)
+                        if err != nil {
+                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                return
+                        }
+
+                        renderInterface, err := templateRender( *E1000Networkemplate, interfaceVM)
                         if err != nil {
                             log.WithFields(logrus.Fields{ "err": err, }).Info("CreateUserData")
                             return
@@ -725,8 +807,8 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
 
         log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdDetachInerfaceVM")
 
-//        var c *LibVirtVM
-//        c = LoadConfigVM(core)
+        var c *LibVirtVM
+        c = LoadConfigVM(core,0)
 
 
         doms, err := Virtinit().Libvirt.Domains()
@@ -769,7 +851,15 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
                                         interfaceVM.MacAddress = v.Mac.Address
                                         interfaceVM.Slot = v.Address.Slot
                                         log.WithFields(logrus.Fields{ "interfaceVM": interfaceVM, }).Info("interface")
-                                        renderInterface, err := templateRender( E1000Networkemplate, interfaceVM)
+
+
+					E1000Networkemplate, err := c.ReadFile( &c.Config.E1000Networkemplate)
+					if err != nil {
+						log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+						return
+					}
+
+                                        renderInterface, err := templateRender( *E1000Networkemplate, interfaceVM)
                                         if err != nil {
                                                 log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachInerfaceVM")
                                                 return
