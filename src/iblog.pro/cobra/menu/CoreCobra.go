@@ -1,7 +1,9 @@
-package main
+package menu
 
 import (
 	"github.com/spf13/cobra"
+        "iblog.pro/cobra/store"
+        Model "iblog.pro/cobra/core/model"
 )
 
 
@@ -29,82 +31,82 @@ import (
 
 func initCoreCobra() {
 
-	core := Singleton[Core]()
+	core := store.Singleton[Model.Core]()
 
-	core.Menu = []Menu{
-                                        Menu{
+	core.Menu = []Model.Menu{
+                                        Model.Menu{
                                                 Name:"RootCmdLibVirt",
-                                                SubMenu: []SubMenu{
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineState",
+                                                SubMenu: []Model.SubMenu{
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineState",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineMigrate",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineMigrate",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                         c.PersistentFlags().StringVarP(&core.ToMove, "to", "", "","Libvirt Move to HyperVisor")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineSoftReboot",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineSoftReboot",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineHardReboot",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineHardReboot",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineShutdown",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineShutdown",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineShutoff",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineShutoff",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineStart",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineStart",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachinePause",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachinePause",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineResume",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineResume",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineCreate",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineCreate",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.XmlTemplate, "xml", "", "","Libvirt Create VM from Xml Template")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineDelete",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineDelete",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
-                                                    SubMenu{ Name: "RootSubCmdvirtualMachineDestroy",
+                                                    Model.SubMenu{ Name: "RootSubCmdvirtualMachineDestroy",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMid, "id", "", "","Libvirt VMname")
                                                     }},
                                                   },
 					},
-                                        Menu{
+                                        Model.Menu{
                                                 Name:"RootCmdConfigure",
-                                                SubMenu: []SubMenu{
+                                                SubMenu: []Model.SubMenu{
 
-                                                    SubMenu{ Name: "RootSubCmdinitVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdinitVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -115,9 +117,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmdinitVMs",
+                                                    Model.SubMenu{ Name: "RootSubCmdinitVMs",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -129,9 +131,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmdattachDiskVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdattachDiskVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -141,9 +143,9 @@ func initCoreCobra() {
                                                         c.PersistentFlags().StringVarP(&core.USER_DATA_PATH, "USER_DATA_PATH", "", "","Libvirt USER-DATA PATH")
                                                     }},
 
-                                                    SubMenu{ Name: "RootSubCmdDetachDiskVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdDetachDiskVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -154,9 +156,9 @@ func initCoreCobra() {
                                                         c.PersistentFlags().StringVarP(&core.DetachDiskName, "DetachDisk", "", "","Libvirt Detach Disk <sda,sdb,sdc,...>")
                                                     }},
 
-                                                    SubMenu{ Name: "RootSubCmdattachInerfaceVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdattachInerfaceVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -167,9 +169,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmdaDetachInerfaceVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdaDetachInerfaceVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -181,9 +183,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmddestroyVM",
+                                                    Model.SubMenu{ Name: "RootSubCmddestroyVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -194,9 +196,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmdlistInterfaceVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdlistInterfaceVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -207,9 +209,9 @@ func initCoreCobra() {
                                                     }},
 
 
-                                                    SubMenu{ Name: "RootSubCmdlistDiskVM",
+                                                    Model.SubMenu{ Name: "RootSubCmdlistDiskVM",
                                                     Run: func(c *cobra.Command) {
-                                                        core := Singleton[Core]()
+                                                        core := store.Singleton[Model.Core]()
                                                         c.PersistentFlags().StringVarP(&core.VMNAME, "VMNAME", "", "","Libvirt VM hostname")
                                                         c.PersistentFlags().IntVarP(&core.CORE, "CORE", "", 0,"Libvirt CORE")
                                                         c.PersistentFlags().IntVarP(&core.MEMORY, "MEMORY", "", 0,"Libvirt MEMORY Mb")
@@ -226,12 +228,12 @@ func initCoreCobra() {
 }
 
 
-func initMenu() *cobra.Command {
+func InitMenu() *cobra.Command {
 
 	initCoreCobra()
 
         var rootCmd = &cobra.Command{Use: "HomeLabs"}
-        core := Singleton[Core]()
+        core := store.Singleton[Model.Core]()
 
 	for _,v := range core.Menu {
 		rootMenu := GetCobraMenu(v.Name)

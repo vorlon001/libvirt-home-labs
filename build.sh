@@ -13,10 +13,14 @@ go get github.com/sirupsen/logrus/hooks/syslog
 go get github.com/sirupsen/logrus/hooks/writer
 go get github.com/spf13/cobra
 go get gopkg.in/yaml.v2
-
+go get iblog.pro/cobra/store
+go get iblog.pro/cobra/logs
+go get iblog.pro/cobra/system
+go get iblog.pro/cobra/core/utils
+go get iblog.pro/cobra/core/interfacedisk
 
 go mod tidy -e
 
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=31.7.0'" .
-cp  main Cobra
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=32.8.0'" .
+cp  cobra Cobra
 cp Cobra ..

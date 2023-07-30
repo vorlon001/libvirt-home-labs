@@ -1,4 +1,4 @@
-package main
+package virtualmachine
 
 import (
 
@@ -10,20 +10,32 @@ import (
 
         "github.com/digitalocean/go-libvirt"
         "github.com/digitalocean/go-libvirt/socket/dialers"
-
+        "iblog.pro/cobra/store"
         "github.com/sirupsen/logrus"
+        logs "iblog.pro/cobra/logs"
+	PanicRecover "iblog.pro/cobra/core/panicrecover"
+        Model "iblog.pro/cobra/core/model"
 )
 
 
+type VirtualMachine struct {
+        CPUCount uint16
+        CPUTime  uint64
+        MemoryBytes uint64
+        MaxMemoryBytes uint64
+        State Model.VirtState
+        Libvirt *libvirt.Libvirt
+}
+
 
 func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
-        core := Singleton[Core]()
-	log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineState Run with args")
+        core := store.Singleton[Model.Core]()
+	logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineState Run with args")
 	Virtinit().VirtualMachineState(core.VMid)
 
         doms, err := Virtinit().Libvirt.Domains()
         if err != nil {
-                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                 return
         }
 
@@ -32,46 +44,46 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
 
                         domainGetXMLDesc, err := Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
                         if err != nil {
-                                log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
+                                logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                                 return
                         }
 
-                        t := Domain{}
+                        t := Model.Domain{}
                         xml.Unmarshal([]byte(domainGetXMLDesc), &t)
-			log.Info("--------------------------------------------------")
+			logs.Log.Info("--------------------------------------------------")
                         for k,v := range t.Devices.Disk {
-				log.WithFields(logrus.Fields{	"key": k, "v.Type": v.Type, "v.Device": v.Device, "v.Source.File": v.Source.File,
+				logs.Log.WithFields(logrus.Fields{	"key": k, "v.Type": v.Type, "v.Device": v.Device, "v.Source.File": v.Source.File,
 								"v.Target.Dev": v.Target.Dev, "v.Target.Bus": v.Target.Bus, }).Info("RootSubCmdvirtualMachineState")
-				log.Info("=========================================================")
+				logs.Log.Info("=========================================================")
                         }
-			log.Info("--------------------------------------------------")
+			logs.Log.Info("--------------------------------------------------")
                         for _, v := range t.Devices.Interface {
-                                log.WithFields(logrus.Fields{ "v.Type": v.Type,}).Info("VM interface id")
-                                log.WithFields(logrus.Fields{ "v.Mac.Address": v.Mac.Address,}).Info("VM Interface.Type")
-                                log.WithFields(logrus.Fields{ "v.Source.Network": v.Source.Network,}).Info("VM Interface.Mac.Address")
-                                log.WithFields(logrus.Fields{ "v.Model.Type": v.Model.Type,}).Info("VM Interface.Source.Network")
-                                log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Model.Type")
-                                log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Address.Type")
-                                log.WithFields(logrus.Fields{ "v.Address.Domain": v.Address.Domain,}).Info("VM Interface.Address.Domain")
-                                log.WithFields(logrus.Fields{ "v.Address.Bus": v.Address.Bus,}).Info("VM Interface.Address.Bus")
-                                log.WithFields(logrus.Fields{ "v.Address.Slot": v.Address.Slot,}).Info("VM Interface.Address.Slot")
-                                log.WithFields(logrus.Fields{ "v.Address.Function": v.Address.Function,}).Info("VM Interface.Address.Function")
-                                log.WithFields(logrus.Fields{ "v.Address.Multifunction": v.Address.Multifunction,}).Info("VM Interface.Address.Multifunction")
-				log.Info("=========================================================")
+                                logs.Log.WithFields(logrus.Fields{ "v.Type": v.Type,}).Info("VM interface id")
+                                logs.Log.WithFields(logrus.Fields{ "v.Mac.Address": v.Mac.Address,}).Info("VM Interface.Type")
+                                logs.Log.WithFields(logrus.Fields{ "v.Source.Network": v.Source.Network,}).Info("VM Interface.Mac.Address")
+                                logs.Log.WithFields(logrus.Fields{ "v.Model.Type": v.Model.Type,}).Info("VM Interface.Source.Network")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Model.Type")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Type": v.Address.Type,}).Info("VM Interface.Address.Type")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Domain": v.Address.Domain,}).Info("VM Interface.Address.Domain")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Bus": v.Address.Bus,}).Info("VM Interface.Address.Bus")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Slot": v.Address.Slot,}).Info("VM Interface.Address.Slot")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Function": v.Address.Function,}).Info("VM Interface.Address.Function")
+                                logs.Log.WithFields(logrus.Fields{ "v.Address.Multifunction": v.Address.Multifunction,}).Info("VM Interface.Address.Multifunction")
+				logs.Log.Info("=========================================================")
                         }
-			log.Info("--------------------------------------------------")
+			logs.Log.Info("--------------------------------------------------")
                 }
         }
 }
 
 func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
 
-        core := Singleton[Core]()
-        log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
+        core := store.Singleton[Model.Core]()
+        logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
 
         domains, err := ret.Libvirt.Domains()
         if err != nil {
-            log.Fatalf("failed to retrieve domains: %v", err)
+            logs.Log.Fatalf("failed to retrieve domains: %v", err)
         }
 
         fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
@@ -80,7 +92,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
                 a, _ := ret.Libvirt.DomainState(d.Name)
                 c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
                 fmt.Printf("%#v\n",d);
-                fmt.Printf("%d\t%s\t%#s\n", d.ID, d.Name, DomainState[c])
+                fmt.Printf("%d\t%s\t%#s\n", d.ID, d.Name, Model.DomainState[c])
         }
 
         flags := libvirt.MigrateLive |
@@ -93,19 +105,19 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
 
         dom, err := ret.Libvirt.DomainLookupByName(core.VMid)
         if err != nil {
-            log.Fatalf("failed to lookup domain: %v", err)
+            logs.Log.Fatalf("failed to lookup domain: %v", err)
         }
         dconnuri := []string{ fmt.Sprintf("qemu+ssh://root@%s/system",core.ToMove)}
         if e, err := ret.Libvirt.DomainMigratePerform3Params( dom, dconnuri,
                                                               []libvirt.TypedParam{}, []byte{}, flags); err != nil {
-		    log.Fatalf("unexpected live migration error: %v", err)
+		    logs.Log.Fatalf("unexpected live migration error: %v", err)
         } else {
             fmt.Printf("%#v\n",e);
         }
 
         domains, err = ret.Libvirt.Domains()
         if err != nil {
-                log.Fatalf("failed to retrieve domains: %v", err)
+                logs.Log.Fatalf("failed to retrieve domains: %v", err)
         }
 
         fmt.Println("ID\tName\t\tUUID\t\t\t\tStatus")
@@ -114,7 +126,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
                 a, _ := ret.Libvirt.DomainState(d.Name)
                 c, _ := strconv.Atoi(fmt.Sprintf("%d",a))
                 fmt.Printf("%#v\n",d);
-                fmt.Printf("%d\t%s\t%x\t%#s\n", d.ID, d.Name, d.UUID, DomainState[c])
+                fmt.Printf("%d\t%s\t%x\t%#s\n", d.ID, d.Name, d.UUID, Model.DomainState[c])
         }
 
 
@@ -126,12 +138,12 @@ func (ret *VirtualMachine) VirtualMachineState(id string) {
 //        var ret VirtualMachine //VirtualMachineState
 
         d, err := ret.Libvirt.DomainLookupByName(id)
-	log.WithFields(logrus.Fields{ "DomainLookupByName": d, "err": err, "id": id, }).Info("Inside VirtualMachineState Run")
-        herr(err)
+	logs.Log.WithFields(logrus.Fields{ "DomainLookupByName": d, "err": err, "id": id, }).Info("Inside VirtualMachineState Run")
+        PanicRecover.Herr(err)
 
         state, maxmem, mem, ncpu, cputime, err := ret.Libvirt.DomainGetInfo(d)
-	log.WithFields(logrus.Fields{ "state": state, "maxmem": maxmem, "mem": mem, "ncpu": ncpu, "cputime": cputime, "err": err, }).Info("Inside VirtualMachineState Run")
-        herr(err)
+	logs.Log.WithFields(logrus.Fields{ "state": state, "maxmem": maxmem, "mem": mem, "ncpu": ncpu, "cputime": cputime, "err": err, }).Info("Inside VirtualMachineState Run")
+        PanicRecover.Herr(err)
 
         ret.CPUCount = ncpu
         ret.CPUTime = cputime
@@ -139,28 +151,28 @@ func (ret *VirtualMachine) VirtualMachineState(id string) {
         ret.MemoryBytes = mem * 1024
         ret.MaxMemoryBytes = maxmem * 1024
         temp := libvirt.DomainState(state)
-        herr(err)
+        PanicRecover.Herr(err)
 
         switch temp {
         case libvirt.DomainNostate:
-                ret.State = VirtStatePending
+                ret.State = Model.VirtStatePending
         case libvirt.DomainRunning:
-                ret.State = VirtStateRunning
+                ret.State = Model.VirtStateRunning
         case libvirt.DomainBlocked:
-                ret.State = VirtStateBlocked
+                ret.State = Model.VirtStateBlocked
         case libvirt.DomainPaused:
-                ret.State = VirtStatePaused
+                ret.State = Model.VirtStatePaused
         case libvirt.DomainShutdown:
-                ret.State = VirtStateShutdown
+                ret.State = Model.VirtStateShutdown
         case libvirt.DomainShutoff:
-                ret.State = VirtStateShutoff
+                ret.State = Model.VirtStateShutoff
         case libvirt.DomainCrashed:
-                ret.State = VirtStateCrashed
+                ret.State = Model.VirtStateCrashed
         case libvirt.DomainPmsuspended:
-                ret.State = VirtStateHybernating
+                ret.State = Model.VirtStateHybernating
         }
         ret.Libvirt.DomainGetState(d, 0)
-        hret(ret)
+        PanicRecover.Hret(ret)
 }
 
 
@@ -169,102 +181,102 @@ func (ret *VirtualMachine) VirtualMachineState(id string) {
 func (ret *VirtualMachine) VirtualMachineCreate(xmlTemplate string) {
 
         xml, err := ioutil.ReadFile(xmlTemplate)
-        herr(err)
+        PanicRecover.Herr(err)
 
         d, err := ret.Libvirt.DomainDefineXML(string(xml))
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hret(d)
+        PanicRecover.Hret(d)
 }
 
 // VirtualMachineDelete deletes a new VM from an xml template file
 func (ret *VirtualMachine) VirtualMachineDelete(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
         err = ret.Libvirt.DomainUndefineFlags(d, libvirt.DomainUndefineKeepNvram)
-        herr(err)
-        hok(fmt.Sprintf("%v was deleted", id))
+        PanicRecover.Herr(err)
+        PanicRecover.Hok(fmt.Sprintf("%v was deleted", id))
 }
 
 // VirtualMachineSoftReboot reboots a machine gracefully, as chosen by hypervisor.
 func (ret *VirtualMachine) VirtualMachineSoftReboot(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainReboot(d, libvirt.DomainRebootDefault)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was soft-rebooted successfully", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was soft-rebooted successfully", id))
 }
 
 // VirtualMachineHardReboot sends a VM into hard-reset mode. This is damaging to all ongoing file operations.
 func (ret *VirtualMachine) VirtualMachineHardReboot(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainReset(d, 0)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was hard-rebooted successfully", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was hard-rebooted successfully", id))
 }
 
 
 // VirtualMachineShutdown gracefully shuts down the VM.
 func (ret *VirtualMachine) VirtualMachineShutdown(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainShutdown(d)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was shutdown successfully", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was shutdown successfully", id))
 }
 
 // VirtualMachineShutoff kills running VM. Equivalent to pulling a plug out of a computer.
 func (ret *VirtualMachine) VirtualMachineShutoff(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainDestroy(d)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was shutoff successfully", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was shutoff successfully", id))
 }
 
 // VirtualMachineStart starts up a VM.
 func (ret *VirtualMachine) VirtualMachineStart(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         //v.DomainRestore()
         //_, err = ret.Libvirt.DomainCreateWithFlags(d, uint32(libvirt.DomainStartBypassCache))
         err = ret.Libvirt.DomainCreate(d)
 
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was started", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was started", id))
 }
 
 // VirtualMachinePause stops the execution of the VM. CPU is not used, but memory is still occupied.
 func (ret *VirtualMachine) VirtualMachinePause(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainSuspend(d)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v is paused", id))
+        PanicRecover.Hok(fmt.Sprintf("%v is paused", id))
 }
 
 // VirtualMachineResume can be called after Pause, to resume the invocation of the VM.
 func (ret *VirtualMachine) VirtualMachineResume(id string) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        herr(err)
+        PanicRecover.Herr(err)
 
         err = ret.Libvirt.DomainResume(d)
-        herr(err)
+        PanicRecover.Herr(err)
 
-        hok(fmt.Sprintf("%v was resumed", id))
+        PanicRecover.Hok(fmt.Sprintf("%v was resumed", id))
 }
 
 
@@ -272,7 +284,7 @@ func Virtinit() *VirtualMachine {
 	v := VirtualMachine{}
         v.Libvirt = libvirt.NewWithDialer(dialers.NewLocal(dialers.WithLocalTimeout(time.Second * 2)))
         if err := v.Libvirt.Connect(); err != nil {
-                log.Fatalf("failed to connect: %v", err)
+                logs.Log.Fatalf("failed to connect: %v", err)
         }
 	return &v
 }

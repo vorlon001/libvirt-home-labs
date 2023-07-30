@@ -1,6 +1,9 @@
 package main
 
 import (
+        PanicRecover "iblog.pro/cobra/core/panicrecover"
+        "iblog.pro/cobra/system"
+	"iblog.pro/cobra/menu"
 )
 
 
@@ -36,11 +39,10 @@ import (
 
 func main() {
 
-        log = InitLogrus()
-        defer PanicRecover()
+        defer PanicRecover.PanicRecover()
 
-	VersionBuild(Version)
+	system.VersionBuild(Version)
 
-	initMenu().Execute()
+	menu.InitMenu().Execute()
 
 }

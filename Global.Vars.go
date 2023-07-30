@@ -1,12 +1,8 @@
 package main
 
 import (
-        "sync"
-        "github.com/sirupsen/logrus"
+        Model "iblog.pro/cobra/core/model"
 )
-
-var log *logrus.Logger
-
 
 var DomainState = map[int]string{
 					0: "DomainNostate",
@@ -19,8 +15,6 @@ var DomainState = map[int]string{
 					7: "DomainPmsuspended" }
 
 
-
-var cache sync.Map
 
 var Version string
 
@@ -38,27 +32,26 @@ var Version string
 // TODO:
 
 const (
-        VirtStatePending     = VirtState("Pending")     // VM was just created and there is no state yet
-        VirtStateRunning     = VirtState("Running")     // VM is running
-        VirtStateBlocked     = VirtState("Blocked")     // VM Blocked on resource
-        VirtStatePaused      = VirtState("Paused")      // VM is paused
-        VirtStateShutdown    = VirtState("Shutdown")    // VM is being shut down
-        VirtStateShutoff     = VirtState("Shutoff")     // VM is shut off
-        VirtStateCrashed     = VirtState("Crashed")     // Most likely VM crashed on startup cause something is missing.
-        VirtStateHybernating = VirtState("Hybernating") // VM is hybernating usually due to guest machine request
+        VirtStatePending     = Model.VirtState("Pending")     // VM was just created and there is no state yet
+        VirtStateRunning     = Model.VirtState("Running")     // VM is running
+        VirtStateBlocked     = Model.VirtState("Blocked")     // VM Blocked on resource
+        VirtStatePaused      = Model.VirtState("Paused")      // VM is paused
+        VirtStateShutdown    = Model.VirtState("Shutdown")    // VM is being shut down
+        VirtStateShutoff     = Model.VirtState("Shutoff")     // VM is shut off
+        VirtStateCrashed     = Model.VirtState("Crashed")     // Most likely VM crashed on startup cause something is missing.
+        VirtStateHybernating = Model.VirtState("Hybernating") // VM is hybernating usually due to guest machine request
 )
 
 
-
 const (
-        VirtualMachineStatusDeleted      = VirtualMachineStatus("deleted")
-        VirtualMachineStatusCreated      = VirtualMachineStatus("created")
-        VirtualMachineStatusReady        = VirtualMachineStatus("ready")
-        VirtualMachineStatusStarting     = VirtualMachineStatus("starting")
-        VirtualMachineStatusImaging      = VirtualMachineStatus("imaging")
-        VirtualMachineStatusRunning      = VirtualMachineStatus("running")
-        VirtualMachineStatusOff          = VirtualMachineStatus("off")
-        VirtualMachineStatusShuttingDown = VirtualMachineStatus("shutting_down")
+        VirtualMachineStatusDeleted      = Model.VirtualMachineStatus("deleted")
+        VirtualMachineStatusCreated      = Model.VirtualMachineStatus("created")
+        VirtualMachineStatusReady        = Model.VirtualMachineStatus("ready")
+        VirtualMachineStatusStarting     = Model.VirtualMachineStatus("starting")
+        VirtualMachineStatusImaging      = Model.VirtualMachineStatus("imaging")
+        VirtualMachineStatusRunning      = Model.VirtualMachineStatus("running")
+        VirtualMachineStatusOff          = Model.VirtualMachineStatus("off")
+        VirtualMachineStatusShuttingDown = Model.VirtualMachineStatus("shutting_down")
 
 /*
 	CDDiskTemplate = `

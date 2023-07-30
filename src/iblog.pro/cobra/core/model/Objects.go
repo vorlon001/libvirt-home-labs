@@ -1,11 +1,10 @@
-package main
+package object
 
 import (
 
         "github.com/spf13/cobra"
-	"github.com/digitalocean/go-libvirt"
+        InterfaceNetwork "iblog.pro/cobra/core/interfacenetwork"
 )
-
 
 
 //**************************************************************
@@ -22,37 +21,35 @@ import (
 // TODO:
 type VirtState string
 
+const (
+        VirtStatePending     = VirtState("Pending")     // VM was just created and there is no state yet
+        VirtStateRunning     = VirtState("Running")     // VM is running
+        VirtStateBlocked     = VirtState("Blocked")     // VM Blocked on resource
+        VirtStatePaused      = VirtState("Paused")      // VM is paused
+        VirtStateShutdown    = VirtState("Shutdown")    // VM is being shut down
+        VirtStateShutoff     = VirtState("Shutoff")     // VM is shut off
+        VirtStateCrashed     = VirtState("Crashed")     // Most likely VM crashed on startup cause something is missing.
+        VirtStateHybernating = VirtState("Hybernating") // VM is hybernating usually due to guest machine request
+)
 
-type CobraMenu struct { }
-
-
-type VMDisk struct {
-        Path     string `yaml:"path"`
-        Tmpl string `yaml:"tmpl"`
-}
-
-type InterfaceName struct {
-        Name     string `yaml:"name"`
-        MacAddress string `yaml:"mac"`
-	Slot	string  `yaml:"slot"`
-}
+var DomainState = map[int]string{
+                                        0: "DomainNostate",
+                                        1: "DomainRunning",
+                                        2: "DomainBlocked",
+                                        3: "DomainPaused",
+                                        4: "DomainShutdown",
+                                        5: "DomainShutoff",
+                                        6: "DomainCrashed",
+                                        7: "DomainPmsuspended" }
 
 
 type VirtualMachineStatus string
 
-type VirtualMachine struct {
-        CPUCount uint16
-        CPUTime  uint64
-        MemoryBytes uint64
-        MaxMemoryBytes uint64
-        State VirtState
-        Libvirt *libvirt.Libvirt
-}
 
 
 type Config struct {
 	IMAGENAME	 string   `yaml:"IMAGENAME"`
-        INTERFACEINIT    []InterfaceName `yaml:"INTERFACE_INIT"`
+        INTERFACEINIT    []InterfaceNetwork.InterfaceName `yaml:"INTERFACE_INIT"`
         NETWORKCONFIGTPL string   `yaml:"NETWORK_CONFIG_TPL"`
         NEXUSREPO        string   `yaml:"NEXUS_REPO"`
         NEXUSREPOSEC     string   `yaml:"NEXUS_REPO_SEC"`
@@ -90,32 +87,6 @@ type NetworkPort struct {
 type Network struct {
         Block map[string]NetworkPort `yaml:"block"`
         MagicMac string `yaml:"magic_mac"`
-}
-type LibVirtVM struct {
-
-        VMPath          string
-        VMNAME          string  `yaml:"VMNAME"`
-        VMNAME_FQDN     string  `yaml:"VMNAME_FQDN"`
-        NodeId        	string  `yaml:"nodeid"`
-        ROOTFS_SIZE   	int     `yaml:"ROOTFS_SIZE"`
-	DISKID		string	`yaml:"DISKID"`
-	EXT_DISK_SIZE	int 	`yaml:"EXT_DISK_SIZE"`
-	DetachDiskName	string
-	XmlTemplate     string
-
-        MEMORY                  int
-        CORE                    int
-        DISKSDA                 string
-        DISKSDBCLOUDINIT        string
-
-        AfterDeploy   []string `yaml:"after-deploy"`
-        Command       []string `yaml:"command"`
-        Config        Config   `yaml:"config"`
-        CreateImageVM []string `yaml:"create-image-vm"`
-        Network       Network  `yaml:"network"`
-        Pgk   []string `yaml:"pgk"`
-        SSHKeys       []string `yaml:"ssh-keys"`
-        VMDisk        []VMDisk `yaml:"vm-disk"`
 }
 
 type SubMenu struct {

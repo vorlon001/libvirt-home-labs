@@ -1,4 +1,4 @@
-package main
+package logs
 
 import (
         "io/ioutil"
@@ -11,6 +11,11 @@ import (
 )
 
 
+var Log *logrus.Logger
+
+func init() {
+        Log = InitLogrus()
+}
 
 func InitLogrus() *logrus.Logger {
 

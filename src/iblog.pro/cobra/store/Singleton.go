@@ -1,10 +1,11 @@
-package main
+package store
 
 import (
+        "sync"
         "reflect"
 )
 
-
+var cache sync.Map
 
 // Singleton returns a singleton of T.
 func Singleton[T any]() (t *T) {

@@ -1,4 +1,4 @@
-package main
+package network
 
 import (
 
@@ -6,8 +6,16 @@ import (
 
 	"fmt"
         "github.com/sirupsen/logrus"
+        logs "iblog.pro/cobra/logs"
+
 )
 
+
+type InterfaceName struct {
+        Name     string `yaml:"name"`
+        MacAddress string `yaml:"mac"`
+        Slot    string  `yaml:"slot"`
+}
 
 
 func (j *InterfaceName) CreateMacAddress(MagicMac string) error {
@@ -15,7 +23,7 @@ func (j *InterfaceName) CreateMacAddress(MagicMac string) error {
         buf := make([]byte, 3)
         _, err := rand.Read(buf)
         if err != nil {
-		log.WithFields(logrus.Fields{ "err": err, }).Info("CreateMacAddress")
+		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateMacAddress")
                 return err
         }
         buf[0] |= 2
