@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
         "strconv"
-        "io/ioutil"
+//        "io/ioutil"
         "encoding/xml"
 
         "github.com/digitalocean/go-libvirt"
@@ -13,7 +13,7 @@ import (
         "iblog.pro/cobra/store"
         "github.com/sirupsen/logrus"
         logs "iblog.pro/cobra/logs"
-	PanicRecover "iblog.pro/cobra/core/panicrecover"
+	//PanicRecover "iblog.pro/cobra/core/panicrecover"
         Model "iblog.pro/cobra/core/model"
 )
 
@@ -134,16 +134,20 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
 
 
 // VirtualMachineState returns current state of a virtual machine.
-func (ret *VirtualMachine) VirtualMachineState(id string) {
+func (ret *VirtualMachine) VirtualMachineState(id string) (string, error) {
 //        var ret VirtualMachine //VirtualMachineState
 
         d, err := ret.Libvirt.DomainLookupByName(id)
 	logs.Log.WithFields(logrus.Fields{ "DomainLookupByName": d, "err": err, "id": id, }).Info("Inside VirtualMachineState Run")
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         state, maxmem, mem, ncpu, cputime, err := ret.Libvirt.DomainGetInfo(d)
 	logs.Log.WithFields(logrus.Fields{ "state": state, "maxmem": maxmem, "mem": mem, "ncpu": ncpu, "cputime": cputime, "err": err, }).Info("Inside VirtualMachineState Run")
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         ret.CPUCount = ncpu
         ret.CPUTime = cputime
@@ -151,7 +155,9 @@ func (ret *VirtualMachine) VirtualMachineState(id string) {
         ret.MemoryBytes = mem * 1024
         ret.MaxMemoryBytes = maxmem * 1024
         temp := libvirt.DomainState(state)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         switch temp {
         case libvirt.DomainNostate:
@@ -172,111 +178,145 @@ func (ret *VirtualMachine) VirtualMachineState(id string) {
                 ret.State = Model.VirtStateHybernating
         }
         ret.Libvirt.DomainGetState(d, 0)
-        PanicRecover.Hret(ret)
+        if err != nil {
+                return "",err
+        }
+        return fmt.Sprintf("%v",ret), nil
 }
 
 
 
 // VirtualMachineCreate creates a new VM from an xml template file
-func (ret *VirtualMachine) VirtualMachineCreate(xmlTemplate string) {
+func (ret *VirtualMachine) VirtualMachineCreate(xmlTemplate string) (string, error) {
 
+/*
         xml, err := ioutil.ReadFile(xmlTemplate)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
+*/
 
-        d, err := ret.Libvirt.DomainDefineXML(string(xml))
-        PanicRecover.Herr(err)
+        d, err := ret.Libvirt.DomainDefineXML(string(xmlTemplate))
+        if err != nil {
+                return "",err
+        }
 
-        PanicRecover.Hret(d)
+        return fmt.Sprintf("%v",d), nil
 }
 
 // VirtualMachineDelete deletes a new VM from an xml template file
-func (ret *VirtualMachine) VirtualMachineDelete(id string) {
+func (ret *VirtualMachine) VirtualMachineDelete(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
         err = ret.Libvirt.DomainUndefineFlags(d, libvirt.DomainUndefineKeepNvram)
-        PanicRecover.Herr(err)
-        PanicRecover.Hok(fmt.Sprintf("%v was deleted", id))
+        if err != nil {
+                return "",err
+        }
+        return fmt.Sprintf("%v was deleted", id), nil
 }
 
 // VirtualMachineSoftReboot reboots a machine gracefully, as chosen by hypervisor.
-func (ret *VirtualMachine) VirtualMachineSoftReboot(id string) {
+func (ret *VirtualMachine) VirtualMachineSoftReboot(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
-
+        if err != nil {
+		return "",err
+	}
         err = ret.Libvirt.DomainReboot(d, libvirt.DomainRebootDefault)
-        PanicRecover.Herr(err)
-
-        PanicRecover.Hok(fmt.Sprintf("%v was soft-rebooted successfully", id))
+        if err != nil {
+		return "",err
+	}
+	return fmt.Sprintf("%v was soft-rebooted successfully", id), nil
 }
 
 // VirtualMachineHardReboot sends a VM into hard-reset mode. This is damaging to all ongoing file operations.
-func (ret *VirtualMachine) VirtualMachineHardReboot(id string) {
+func (ret *VirtualMachine) VirtualMachineHardReboot(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         err = ret.Libvirt.DomainReset(d, 0)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
-        PanicRecover.Hok(fmt.Sprintf("%v was hard-rebooted successfully", id))
+        return fmt.Sprintf("%v was hard-rebooted successfully", id), nil
 }
 
 
 // VirtualMachineShutdown gracefully shuts down the VM.
-func (ret *VirtualMachine) VirtualMachineShutdown(id string) {
+func (ret *VirtualMachine) VirtualMachineShutdown(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         err = ret.Libvirt.DomainShutdown(d)
-        PanicRecover.Herr(err)
-
-        PanicRecover.Hok(fmt.Sprintf("%v was shutdown successfully", id))
+        if err != nil {
+                return "",err
+        }
+        return fmt.Sprintf("%v was shutdown successfully", id), nil
 }
 
 // VirtualMachineShutoff kills running VM. Equivalent to pulling a plug out of a computer.
-func (ret *VirtualMachine) VirtualMachineShutoff(id string) {
+func (ret *VirtualMachine) VirtualMachineShutoff(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         err = ret.Libvirt.DomainDestroy(d)
-        PanicRecover.Herr(err)
-
-        PanicRecover.Hok(fmt.Sprintf("%v was shutoff successfully", id))
+        if err != nil {
+                return "",err
+        }
+        return fmt.Sprintf("%v was shutoff successfully", id), nil
 }
 
 // VirtualMachineStart starts up a VM.
-func (ret *VirtualMachine) VirtualMachineStart(id string) {
+func (ret *VirtualMachine) VirtualMachineStart(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
-        //v.DomainRestore()
-        //_, err = ret.Libvirt.DomainCreateWithFlags(d, uint32(libvirt.DomainStartBypassCache))
         err = ret.Libvirt.DomainCreate(d)
-
-        PanicRecover.Herr(err)
-
-        PanicRecover.Hok(fmt.Sprintf("%v was started", id))
+        if err != nil {
+                return "",err
+        }
+        return fmt.Sprintf("%v was started", id), nil
 }
 
 // VirtualMachinePause stops the execution of the VM. CPU is not used, but memory is still occupied.
-func (ret *VirtualMachine) VirtualMachinePause(id string) {
+func (ret *VirtualMachine) VirtualMachinePause(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         err = ret.Libvirt.DomainSuspend(d)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
-        PanicRecover.Hok(fmt.Sprintf("%v is paused", id))
+        return fmt.Sprintf("%v is paused", id), nil
 }
 
 // VirtualMachineResume can be called after Pause, to resume the invocation of the VM.
-func (ret *VirtualMachine) VirtualMachineResume(id string) {
+func (ret *VirtualMachine) VirtualMachineResume(id string) (string, error) {
         d, err := ret.Libvirt.DomainLookupByName(id)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
         err = ret.Libvirt.DomainResume(d)
-        PanicRecover.Herr(err)
+        if err != nil {
+                return "",err
+        }
 
-        PanicRecover.Hok(fmt.Sprintf("%v was resumed", id))
+        return fmt.Sprintf("%v was resumed", id), nil
+
 }
 
 
