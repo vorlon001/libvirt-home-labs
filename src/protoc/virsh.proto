@@ -19,19 +19,51 @@ option go_package = "iblog.pro/cobra/server";
 option objc_class_prefix = "HLW";
 
 package virsh;
+import "google/api/annotations.proto";
 
 // The greeting service definition.
 service Virsh {
-  rpc MachineState (VirshRequest) returns (VirshReply) {}
-  rpc MachineCreate (VirshCreateRequest) returns (VirshReply) {}
-  rpc MachineDelete (VirshRequest) returns (VirshReply) {}
-  rpc MachineSoftReboot (VirshRequest) returns (VirshReply) {}
-  rpc MachineHardReboot (VirshRequest) returns (VirshReply) {}
-  rpc MachineShutdown (VirshRequest) returns (VirshReply) {}
-  rpc MachineShutoff (VirshRequest) returns (VirshReply) {}
-  rpc MachineStart (VirshRequest) returns (VirshReply) {}
-  rpc MachinePause (VirshRequest) returns (VirshReply) {}
-  rpc MachineResume (VirshRequest) returns (VirshReply) {}
+  rpc MachineState (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      get: "/api/v1/Virsh/State/{vmname}"
+    };}
+  rpc MachineCreate (VirshCreateRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Create"
+    };}
+  rpc MachineDelete (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/Virsh/Delete/{vmname}"
+    };}
+  rpc MachineSoftReboot (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/SoftReboot/{vmname}"
+    };}
+  rpc MachineHardReboot (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/HardReboot/{vmname}"
+    };}
+  rpc MachineShutdown (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Shutdown/{vmname}"
+    };}
+  rpc MachineShutoff (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Shutoff/{vmname}"
+    };}
+  rpc MachineStart (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Start/{vmname}"
+    };}
+  rpc MachinePause (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Pause/{vmname}"
+    };}
+  rpc MachineResume (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Resume/{vmname}"
+    };}
+
 }
 
 // The request message containing the user's name.

@@ -36,6 +36,7 @@ const (
 	Virsh_MachineState_FullMethodName      = "/virsh.Virsh/MachineState"
 	Virsh_MachineCreate_FullMethodName     = "/virsh.Virsh/MachineCreate"
 	Virsh_MachineDelete_FullMethodName     = "/virsh.Virsh/MachineDelete"
+	Virsh_MachineSoftReboot_FullMethodName = "/virsh.Virsh/MachineSoftReboot"
 	Virsh_MachineHardReboot_FullMethodName = "/virsh.Virsh/MachineHardReboot"
 	Virsh_MachineShutdown_FullMethodName   = "/virsh.Virsh/MachineShutdown"
 	Virsh_MachineShutoff_FullMethodName    = "/virsh.Virsh/MachineShutoff"
@@ -51,6 +52,7 @@ type VirshClient interface {
 	MachineState(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineCreate(ctx context.Context, in *VirshCreateRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineDelete(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
+	MachineSoftReboot(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineHardReboot(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineShutdown(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineShutoff(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
@@ -88,6 +90,15 @@ func (c *virshClient) MachineCreate(ctx context.Context, in *VirshCreateRequest,
 func (c *virshClient) MachineDelete(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error) {
 	out := new(VirshReply)
 	err := c.cc.Invoke(ctx, Virsh_MachineDelete_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *virshClient) MachineSoftReboot(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error) {
+	out := new(VirshReply)
+	err := c.cc.Invoke(ctx, Virsh_MachineSoftReboot_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +166,7 @@ type VirshServer interface {
 	MachineState(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineCreate(context.Context, *VirshCreateRequest) (*VirshReply, error)
 	MachineDelete(context.Context, *VirshRequest) (*VirshReply, error)
+	MachineSoftReboot(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineHardReboot(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineShutdown(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineShutoff(context.Context, *VirshRequest) (*VirshReply, error)
@@ -176,6 +188,9 @@ func (UnimplementedVirshServer) MachineCreate(context.Context, *VirshCreateReque
 }
 func (UnimplementedVirshServer) MachineDelete(context.Context, *VirshRequest) (*VirshReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineDelete not implemented")
+}
+func (UnimplementedVirshServer) MachineSoftReboot(context.Context, *VirshRequest) (*VirshReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MachineSoftReboot not implemented")
 }
 func (UnimplementedVirshServer) MachineHardReboot(context.Context, *VirshRequest) (*VirshReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineHardReboot not implemented")
@@ -258,6 +273,24 @@ func _Virsh_MachineDelete_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VirshServer).MachineDelete(ctx, req.(*VirshRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Virsh_MachineSoftReboot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VirshRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VirshServer).MachineSoftReboot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Virsh_MachineSoftReboot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VirshServer).MachineSoftReboot(ctx, req.(*VirshRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -388,6 +421,10 @@ var Virsh_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MachineDelete",
 			Handler:    _Virsh_MachineDelete_Handler,
+		},
+		{
+			MethodName: "MachineSoftReboot",
+			Handler:    _Virsh_MachineSoftReboot_Handler,
 		},
 		{
 			MethodName: "MachineHardReboot",
