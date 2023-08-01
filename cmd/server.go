@@ -32,7 +32,7 @@ type server struct {
 
 func (s *server) MachineState(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachineState(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetVmname())
         messageSend := ""
@@ -54,7 +54,7 @@ func (s *server) MachineState(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *server) MachineCreate(ctx context.Context, in *pb.VirshCreateRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineCreate(). Received: %v %v", in.GetXml())
+        log.Printf("func MachineCreate(). Received: %v", in.GetXml())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetXml())
         messageSend := ""
@@ -76,7 +76,7 @@ func (s *server) MachineCreate(ctx context.Context, in *pb.VirshCreateRequest) (
 
 func (s *server) MachineDelete(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineSoftReboot(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachineSoftReboot(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetVmname())
         messageSend := ""
@@ -98,7 +98,7 @@ func (s *server) MachineDelete(ctx context.Context, in *pb.VirshRequest) (*pb.Vi
 
 func (s *server) MachineSoftReboot(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineSoftReboot(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachineSoftReboot(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineSoftReboot(in.GetVmname())
         messageSend := ""
@@ -120,7 +120,7 @@ func (s *server) MachineSoftReboot(ctx context.Context, in *pb.VirshRequest) (*p
 
 func (s *server) MachineHardReboot(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-	log.Printf("func MachineHardReboot(). Received: %v %v", in.GetVmname())
+	log.Printf("func MachineHardReboot(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineHardReboot(in.GetVmname())
 	messageSend := ""
@@ -142,7 +142,7 @@ func (s *server) MachineHardReboot(ctx context.Context, in *pb.VirshRequest) (*p
 
 func (s *server) MachineShutdown(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineShutdown(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachineShutdown(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineShutdown(in.GetVmname())
         messageSend := ""
@@ -164,7 +164,7 @@ func (s *server) MachineShutdown(ctx context.Context, in *pb.VirshRequest) (*pb.
 
 func (s *server) MachineStart(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineHardReboot(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachineHardReboot(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineStart(in.GetVmname())
         messageSend := ""
@@ -187,7 +187,7 @@ func (s *server) MachineStart(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *server) MachinePause(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachinePause(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachinePause(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachinePause(in.GetVmname())
         messageSend := ""
@@ -209,7 +209,7 @@ func (s *server) MachinePause(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *server) MachineResume(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachinePause(). Received: %v %v", in.GetVmname())
+        log.Printf("func MachinePause(). Received: %v", in.GetVmname())
 
         message, err := VirtualMachine.Virtinit().VirtualMachineResume(in.GetVmname())
         messageSend := ""
