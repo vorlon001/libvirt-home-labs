@@ -2,40 +2,37 @@ module main
 
 go 1.20
 
-replace iblog.pro/condor/protos => ./src/protoc
+replace iblog.pro/condor/protos => ../protoc
 
-replace iblog.pro/cobra/store => ./src/iblog.pro/cobra/store
+replace iblog.pro/cobra/store => ../iblog.pro/cobra/store
 
-replace iblog.pro/cobra/logs => ./src/iblog.pro/cobra/logs
+replace iblog.pro/cobra/logs => ../iblog.pro/cobra/logs
 
-replace iblog.pro/cobra/system => ./src/iblog.pro/cobra/system
+replace iblog.pro/cobra/system => ../iblog.pro/cobra/system
 
-replace iblog.pro/cobra/core/utils => ./src/iblog.pro/cobra/core/utils
+replace iblog.pro/cobra/core/utils => ../iblog.pro/cobra/core/utils
 
-replace iblog.pro/cobra/core/interfacenetwork => ./src/iblog.pro/cobra/core/interfacenetwork
+replace iblog.pro/cobra/core/interfacenetwork => ../iblog.pro/cobra/core/interfacenetwork
 
-replace iblog.pro/cobra/core/panicrecover => ./src/iblog.pro/cobra/core/panicrecover
+replace iblog.pro/cobra/core/panicrecover => ../iblog.pro/cobra/core/panicrecover
 
-replace iblog.pro/cobra/core/interfacedisk => ./src/iblog.pro/cobra/core/interfacedisk
+replace iblog.pro/cobra/core/interfacedisk => ../iblog.pro/cobra/core/interfacedisk
 
-replace iblog.pro/cobra/core => ./src/iblog.pro/cobra/core
+replace iblog.pro/cobra/core => ../iblog.pro/cobra/core
 
-replace iblog.pro/cobra/core/model => ./src/iblog.pro/cobra/core/model
+replace iblog.pro/cobra/core/model => ../iblog.pro/cobra/core/model
 
-replace iblog.pro/cobra/core/virtualmachine => ./src/iblog.pro/cobra/core/virtualmachine
+replace iblog.pro/cobra/core/virtualmachine => ../iblog.pro/cobra/core/virtualmachine
 
-replace iblog.pro/cobra/menu => ./src/iblog.pro/cobra/menu
+replace iblog.pro/cobra/menu => ../iblog.pro/cobra/menu
 
-replace iblog.pro/cobra/core/libvirtvm => ./src/iblog.pro/cobra/core/libvirtvm
-
-replace iblog.pro/cobra/core/virshgrpc => ./src/iblog.pro/cobra/core/virshgrpc
+replace iblog.pro/cobra/core/libvirtvm => ../iblog.pro/cobra/core/libvirtvm
 
 require (
 	iblog.pro/cobra/core/model v0.0.0-00010101000000-000000000000
 	iblog.pro/cobra/core/panicrecover v0.0.0-00010101000000-000000000000
 	iblog.pro/cobra/menu v0.0.0-00010101000000-000000000000
 	iblog.pro/cobra/system v0.0.0-00010101000000-000000000000
-	iblog.pro/cobra/core/virshgrpc v0.0.0-00010101000000-000000000000
 )
 
 require (
