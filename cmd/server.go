@@ -14,7 +14,12 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
+
+
         "github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
+
         logs "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/logs"
 	"google.golang.org/grpc"
 	pb "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/protos"
@@ -28,22 +33,44 @@ var (
 
 func main() {
 
-        ctx := context.Background()
-        ctx, cancel := context.WithCancel(ctx)
-        defer cancel()
-
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
-	if err != nil {
-		logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%v", err), }).Error("System Error in main()")
-		os.Exit(1)
-	}
-	s := grpc.NewServer()
-	pb.RegisterVirshServer(s, &Virsh.Server{})
-	logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("server listening at %v", lis.Addr()), }).Error("System message in main()")
-	if err := s.Serve(lis); err != nil {
-		logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%v", err), }).Error("System Error in main()")
-	}
 
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	eg, _ := errgroup.WithContext(ctx)
+
+
+        srv := grpc.NewServer()
+
+
+	eg.Go(func() error {
+
+		logs.Log.WithFields(logrus.Fields{ "message": fmt.Sprintf("starting server 0.0.0.0:%d", *port), }).Info("system message")
+
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+		if err != nil {
+                	logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%v", err), }).Error("System Error in main()")
+	                os.Exit(1)
+        	}
+	        pb.RegisterVirshServer(srv, Virsh.NewServer())
+        	logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("server listening at %v", lis.Addr()), }).Info("System message in main()")
+
+		return srv.Serve(lis)
+	})
+
+
+
+	eg.Go(func() error {
+		// shutdown server
+		<-ctx.Done()
+                logs.Log.Info("stopping server")
+                defer logs.Log.Info("server stopped")
+
+		srv.Stop()
+		return nil
+	})
+
+	_ = eg.Wait()
 
 }

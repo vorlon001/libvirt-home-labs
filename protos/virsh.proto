@@ -47,10 +47,6 @@ service Virsh {
     option (google.api.http) = {
       post: "/api/v1/Virsh/Shutdown/{vmname}"
     };}
-  rpc MachineShutoff (VirshRequest) returns (VirshReply) {
-    option (google.api.http) = {
-      post: "/api/v1/Virsh/Shutoff/{vmname}"
-    };}
   rpc MachineStart (VirshRequest) returns (VirshReply) {
     option (google.api.http) = {
       post: "/api/v1/Virsh/Start/{vmname}"

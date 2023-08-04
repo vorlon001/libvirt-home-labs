@@ -19,6 +19,10 @@ import (
 )
 
 
+
+func NewServer() *Server {
+	return &Server{}
+}
 type Server struct {
 	pb.UnimplementedVirshServer
 }

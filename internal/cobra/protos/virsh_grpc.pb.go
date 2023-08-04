@@ -39,7 +39,6 @@ const (
 	Virsh_MachineSoftReboot_FullMethodName = "/virsh.Virsh/MachineSoftReboot"
 	Virsh_MachineHardReboot_FullMethodName = "/virsh.Virsh/MachineHardReboot"
 	Virsh_MachineShutdown_FullMethodName   = "/virsh.Virsh/MachineShutdown"
-	Virsh_MachineShutoff_FullMethodName    = "/virsh.Virsh/MachineShutoff"
 	Virsh_MachineStart_FullMethodName      = "/virsh.Virsh/MachineStart"
 	Virsh_MachinePause_FullMethodName      = "/virsh.Virsh/MachinePause"
 	Virsh_MachineResume_FullMethodName     = "/virsh.Virsh/MachineResume"
@@ -55,7 +54,6 @@ type VirshClient interface {
 	MachineSoftReboot(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineHardReboot(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineShutdown(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
-	MachineShutoff(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineStart(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachinePause(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineResume(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
@@ -123,15 +121,6 @@ func (c *virshClient) MachineShutdown(ctx context.Context, in *VirshRequest, opt
 	return out, nil
 }
 
-func (c *virshClient) MachineShutoff(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error) {
-	out := new(VirshReply)
-	err := c.cc.Invoke(ctx, Virsh_MachineShutoff_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *virshClient) MachineStart(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error) {
 	out := new(VirshReply)
 	err := c.cc.Invoke(ctx, Virsh_MachineStart_FullMethodName, in, out, opts...)
@@ -169,7 +158,6 @@ type VirshServer interface {
 	MachineSoftReboot(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineHardReboot(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineShutdown(context.Context, *VirshRequest) (*VirshReply, error)
-	MachineShutoff(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineStart(context.Context, *VirshRequest) (*VirshReply, error)
 	MachinePause(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineResume(context.Context, *VirshRequest) (*VirshReply, error)
@@ -197,9 +185,6 @@ func (UnimplementedVirshServer) MachineHardReboot(context.Context, *VirshRequest
 }
 func (UnimplementedVirshServer) MachineShutdown(context.Context, *VirshRequest) (*VirshReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineShutdown not implemented")
-}
-func (UnimplementedVirshServer) MachineShutoff(context.Context, *VirshRequest) (*VirshReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MachineShutoff not implemented")
 }
 func (UnimplementedVirshServer) MachineStart(context.Context, *VirshRequest) (*VirshReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineStart not implemented")
@@ -331,24 +316,6 @@ func _Virsh_MachineShutdown_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Virsh_MachineShutoff_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VirshRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(VirshServer).MachineShutoff(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Virsh_MachineShutoff_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VirshServer).MachineShutoff(ctx, req.(*VirshRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Virsh_MachineStart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VirshRequest)
 	if err := dec(in); err != nil {
@@ -433,10 +400,6 @@ var Virsh_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MachineShutdown",
 			Handler:    _Virsh_MachineShutdown_Handler,
-		},
-		{
-			MethodName: "MachineShutoff",
-			Handler:    _Virsh_MachineShutoff_Handler,
 		},
 		{
 			MethodName: "MachineStart",

@@ -12,8 +12,11 @@
 #go get github.com/sirupsen/logrus/hooks/writer
 #go get github.com/spf13/cobra
 #go get gopkg.in/yaml.v2
-
+#go get go.uber.org/zap
+#go mod download golang.org/x/sync
+#go mod download go.uber.org/zap
+#go mod tidy
 #go mod download github.com/grpc-ecosystem/grpc-gateway/v2
 
-go build -o ./bin/client ./cmd/client.go
+#go build -o ./bin/client ./cmd/client.go
 go build -o ./bin/server ./cmd/server.go

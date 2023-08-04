@@ -137,27 +137,6 @@
         ]
       }
     },
-    "/api/v1/Virsh/Shutoff/{vmname}": {
-      "post": {
-        "operationId": "Virsh_MachineShutoff",
-        "responses": {
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "vmname",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ]
-      }
-    },
     "/api/v1/Virsh/SoftReboot/{vmname}": {
       "post": {
         "operationId": "Virsh_MachineSoftReboot",

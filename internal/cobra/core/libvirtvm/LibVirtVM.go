@@ -13,7 +13,7 @@ import (
         "io/ioutil"
         "os"
         "strings"
-        "gitlab.iblog.pro/cobra/store"
+        "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/store"
         "github.com/sirupsen/logrus"
         logs "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/logs"
 	coreUtils "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/core/utils"
