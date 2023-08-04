@@ -27,10 +27,17 @@ type Server struct {
 func (s *Server) MachineState(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
         log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
-
-        message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+	domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+		return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineDelete(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -48,11 +55,19 @@ func (s *Server) MachineState(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *Server) MachineCreate(ctx context.Context, in *pb.VirshCreateRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineCreate(). Received: %v %v", in.GetXml())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetXml())
+        log.Printf("func MachineState(). Received: %v %v", in.GetXml())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineDelete(in.GetXml())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -70,11 +85,20 @@ func (s *Server) MachineCreate(ctx context.Context, in *pb.VirshCreateRequest) (
 
 func (s *Server) MachineDelete(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineSoftReboot(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineDelete(in.GetVmname())
+
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineDelete(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -92,11 +116,19 @@ func (s *Server) MachineDelete(ctx context.Context, in *pb.VirshRequest) (*pb.Vi
 
 func (s *Server) MachineSoftReboot(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineSoftReboot(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineSoftReboot(in.GetVmname())
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineSoftReboot(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -114,11 +146,19 @@ func (s *Server) MachineSoftReboot(ctx context.Context, in *pb.VirshRequest) (*p
 
 func (s *Server) MachineHardReboot(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-	log.Printf("func MachineHardReboot(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineHardReboot(in.GetVmname())
-	messageSend := ""
-	var code int32 = 0;
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
+        messageSend := ""
+        var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineHardReboot(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
 		messageSend = fmt.Sprintf("%s", err)
@@ -136,11 +176,19 @@ func (s *Server) MachineHardReboot(ctx context.Context, in *pb.VirshRequest) (*p
 
 func (s *Server) MachineShutdown(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineShutdown(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineShutdown(in.GetVmname())
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineShutdown(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -158,11 +206,19 @@ func (s *Server) MachineShutdown(ctx context.Context, in *pb.VirshRequest) (*pb.
 
 func (s *Server) MachineStart(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachineHardReboot(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineStart(in.GetVmname())
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineStart(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -181,11 +237,19 @@ func (s *Server) MachineStart(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *Server) MachinePause(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachinePause(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachinePause(in.GetVmname())
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachinePause(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)
@@ -203,11 +267,19 @@ func (s *Server) MachinePause(ctx context.Context, in *pb.VirshRequest) (*pb.Vir
 
 func (s *Server) MachineResume(ctx context.Context, in *pb.VirshRequest) (*pb.VirshReply, error) {
 
-        log.Printf("func MachinePause(). Received: %v %v", in.GetVmname())
 
-        message, err := VirtualMachine.Virtinit().VirtualMachineResume(in.GetVmname())
+        log.Printf("func MachineState(). Received: %v %v", in.GetVmname())
         messageSend := ""
         var code int32 = 0;
+        domain, err := VirtualMachine.Virtinit()
+        if err != nil {
+                log.Printf("ERROR:%s\n", err)
+                messageSend = fmt.Sprintf("%s", err)
+                code = 500
+                return &pb.VirshReply{Message: messageSend, Code: code}, nil
+        }
+
+        message, err := domain.VirtualMachineResume(in.GetVmname())
         if err != nil {
                 log.Printf("ERROR:%s\n", err)
                 messageSend = fmt.Sprintf("%s", err)

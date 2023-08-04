@@ -27,13 +27,22 @@ type VirtualMachine struct {
         Libvirt *libvirt.Libvirt
 }
 
-
+/* will be depricated in grpc version */
 func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineState Run with args")
-	Virtinit().VirtualMachineState(core.VMid)
 
-        doms, err := Virtinit().Libvirt.Domains()
+
+        domain, err := Virtinit()
+        if err != nil {
+		logs.Log.WithFields(logrus.Fields{"message": fmt.Sprintf("ERROR:%s\n", err),}).Info("ERROR in RootSubCmdvirtualMachineMachineState, point 84356")
+                return
+        }
+
+	domain.VirtualMachineState(core.VMid)
+
+
+        doms, err := domain.Libvirt.Domains()
         if err != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                 return
@@ -42,7 +51,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
         for _,j := range doms {
                 if j.Name == core.VMid {
 
-                        domainGetXMLDesc, err := Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        domainGetXMLDesc, err := domain.Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                                 return
@@ -320,13 +329,14 @@ func (ret *VirtualMachine) VirtualMachineResume(id string) (string, error) {
 }
 
 
-func Virtinit() *VirtualMachine {
+func Virtinit() (*VirtualMachine, error) {
 	v := VirtualMachine{}
         v.Libvirt = libvirt.NewWithDialer(dialers.NewLocal(dialers.WithLocalTimeout(time.Second * 2)))
         if err := v.Libvirt.Connect(); err != nil {
                 logs.Log.Fatalf("failed to connect: %v", err)
+		return nil, err
         }
-	return &v
+	return &v, nil
 }
 
 
