@@ -3,7 +3,7 @@ package object
 import (
 
         "github.com/spf13/cobra"
-        InterfaceNetwork "iblog.pro/cobra/core/interfacenetwork"
+        InterfaceNetwork "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/interfacenetwork"
 )
 
 

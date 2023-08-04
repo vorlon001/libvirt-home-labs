@@ -13,12 +13,12 @@ import (
         "io/ioutil"
         "os"
         "strings"
-        "iblog.pro/cobra/store"
+        "gitlab.iblog.pro/cobra/libvirt/internal/cobra/store"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
-	coreUtils "iblog.pro/cobra/core/utils"
-        Model "iblog.pro/cobra/core/model"
-	InterfaceDisk "iblog.pro/cobra/core/interfacedisk"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
+	coreUtils "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/utils"
+        Model "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/model"
+	InterfaceDisk "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/interfacedisk"
 )
 
 type LibVirtVM struct {
@@ -100,7 +100,7 @@ func (a *LibVirtVM) CreateNetworkConfig() {
 
 	logs.Log.WithFields(logrus.Fields{ "networkConfig": *d, }).Info("CreateNetworkConfig")
 
-        render, err := TemplateRender(*d, *a)
+        render, err := a.TemplateRender(*d, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateNetworkConfig")
                 return
@@ -126,7 +126,7 @@ func (a *LibVirtVM) CreateUserData() {
 		return
 	}
 
-        render2, err := TemplateRender(*d2, *a)
+        render2, err := a.TemplateRender(*d2, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateUserData")
                 return
@@ -144,7 +144,7 @@ func (a *LibVirtVM) CreateUserData() {
 func (a *LibVirtVM) PreInitScriptVM() {
 
         for _,v := range a.CreateImageVM {
-                render, err := TemplateRender(v, *a)
+                render, err := a.TemplateRender(v, *a)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 			return
@@ -170,7 +170,7 @@ func (a *LibVirtVM) PreInitScriptVM() {
 func (a *LibVirtVM) AfterDeployVM() {
 
         for _,v := range a.AfterDeploy {
-                render, err := TemplateRender(v, *a)
+                render, err := a.TemplateRender(v, *a)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 			return
@@ -203,7 +203,7 @@ func (a *LibVirtVM) CreateVMXML() {
 	}
 
 
-        render3, err := TemplateRender(*d3, *a)
+        render3, err := a.TemplateRender(*d3, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateVMXML")
                 return
@@ -238,7 +238,7 @@ func (a *LibVirtVM) getConf(filename string) *LibVirtVM {
 
 }
 
-func TemplateRender(templateMust string, configAbstract interface{}) (string, error) {
+func (a *LibVirtVM) TemplateRender(templateMust string, configAbstract interface{}) (string, error) {
 
         tpl := template.Must(template.New("").Parse(templateMust))
         var tplBuffer bytes.Buffer
@@ -339,7 +339,7 @@ func LoadConfigVM(core *Model.Core, increment int) *LibVirtVM {
         }
 
         VMPathTmpl := "{{.Config.VMPATH}}/{{.VMNAME}}/"
-        VMPath, err := TemplateRender(VMPathTmpl, c)
+        VMPath, err := c.TemplateRender(VMPathTmpl, c)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err,}).Info("Inside LoadConfigVM Run with args")
                 return nil

@@ -2,8 +2,8 @@ package menu
 
 import (
 	"github.com/spf13/cobra"
-        "iblog.pro/cobra/store"
-        Model "iblog.pro/cobra/core/model"
+        "gitlab.iblog.pro/cobra/libvirt/internal/cobra/store"
+        Model "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/model"
 )
 
 

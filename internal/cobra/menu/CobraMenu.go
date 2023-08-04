@@ -12,15 +12,15 @@ import (
 
 
         "github.com/digitalocean/go-libvirt"
-	"iblog.pro/cobra/store"
-        logs "iblog.pro/cobra/logs"
-	"iblog.pro/cobra/system"
+	"gitlab.iblog.pro/cobra/libvirt/internal/cobra/store"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
+	"gitlab.iblog.pro/cobra/libvirt/internal/cobra/system"
         "github.com/sirupsen/logrus"
-        coreUtils "iblog.pro/cobra/core/utils"
-	InterfaceNetwork "iblog.pro/cobra/core/interfacenetwork"
-	Model "iblog.pro/cobra/core/model"
-	VirtualMachine "iblog.pro/cobra/core/virtualmachine"
-	Virsh "iblog.pro/cobra/virsh"
+        coreUtils "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/utils"
+	InterfaceNetwork "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/interfacenetwork"
+	Model "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/model"
+	VirtualMachine "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/virtualmachine"
+	Virsh "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/libvirtvm"
 )
 
 type CobraMenu struct { }
@@ -498,7 +498,7 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
                         }
 
 
-			renderXML, err := Virsh.TemplateRender( *SCSIDiskTemplate, *c)
+			renderXML, err := c.TemplateRender( *SCSIDiskTemplate, *c)
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachDiskVM")
 				return
@@ -506,7 +506,7 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
 			logs.Log.WithFields(logrus.Fields{ "renderXML": renderXML, }).Info("RootSubCmdattachDiskVM")
 
 			cmdtmpl := `qemu-img create -f qcow2 {{.Config.VMPATH}}/{{.VMNAME}}/{{.VMNAME}}-disk{{.DISKID}}.qcow2 {{.EXT_DISK_SIZE}}G`
-			renderCmd, err := Virsh.TemplateRender(cmdtmpl, *c)
+			renderCmd, err := c.TemplateRender(cmdtmpl, *c)
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachDiskVM")
 				return
@@ -591,7 +591,7 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
                                 return
                         }
 
-                        renderXML, err := Virsh.TemplateRender( *SCSIDiskTemplate, *c)
+                        renderXML, err := c.TemplateRender( *SCSIDiskTemplate, *c)
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachDiskVM")
                                 return
@@ -690,7 +690,7 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
                                 return
                         }
 
-                        renderInterface, err := Virsh.TemplateRender( *E1000Networkemplate, interfaceVM)
+                        renderInterface, err := c.TemplateRender( *E1000Networkemplate, interfaceVM)
                         if err != nil {
                             logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateUserData")
                             return
@@ -778,7 +778,7 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
 						return
 					}
 
-                                        renderInterface, err := Virsh.TemplateRender( *E1000Networkemplate, interfaceVM)
+                                        renderInterface, err := c.TemplateRender( *E1000Networkemplate, interfaceVM)
                                         if err != nil {
                                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachInerfaceVM")
                                                 return

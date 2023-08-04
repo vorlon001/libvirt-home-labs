@@ -10,11 +10,11 @@ import (
 
         "github.com/digitalocean/go-libvirt"
         "github.com/digitalocean/go-libvirt/socket/dialers"
-        "iblog.pro/cobra/store"
+        "gitlab.iblog.pro/cobra/libvirt/internal/cobra/store"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
-	PanicRecover "iblog.pro/cobra/core/panicrecover"
-        Model "iblog.pro/cobra/core/model"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
+	PanicRecover "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/panicrecover"
+        Model "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/model"
 )
 
 

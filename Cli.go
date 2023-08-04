@@ -1,9 +1,9 @@
 package main
 
 import (
-        PanicRecover "iblog.pro/cobra/core/panicrecover"
-        "iblog.pro/cobra/system"
-	"iblog.pro/cobra/menu"
+        PanicRecover "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/panicrecover"
+        "gitlab.iblog.pro/cobra/libvirt/internal/cobra/system"
+	"gitlab.iblog.pro/cobra/libvirt/internal/cobra/menu"
 )
 
 

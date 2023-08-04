@@ -1,7 +1,7 @@
 package main
 
 import (
-        Model "iblog.pro/cobra/core/model"
+        Model "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/model"
 )
 
 var DomainState = map[int]string{

@@ -4,7 +4,7 @@ import (
         "net"
         "time"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
 )
 
 func Ping(network, address string, timeout time.Duration) error {

@@ -8,7 +8,7 @@ import (
         "strings"
         "runtime"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
 )
 
 

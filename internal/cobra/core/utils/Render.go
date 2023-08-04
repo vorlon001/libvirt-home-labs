@@ -7,7 +7,7 @@ import (
         "github.com/sirupsen/logrus"
 
         "html/template"
-        logs "iblog.pro/cobra/logs"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
 )
 
 func TemplateRender(templateMust string, configAbstract interface{}) (string, error) {

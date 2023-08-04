@@ -3,8 +3,8 @@ package disk
 import (
 
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
-	coreUtils "iblog.pro/cobra/core/utils"
+        logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
+	coreUtils "gitlab.iblog.pro/cobra/libvirt/internal/cobra/core/utils"
 )
 
 type VMDisk struct {
