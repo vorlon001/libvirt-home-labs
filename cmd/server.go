@@ -12,9 +12,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"net"
-
+	"os"
+        "github.com/sirupsen/logrus"
+        logs "iblog.pro/cobra/logs"
 	"google.golang.org/grpc"
 	pb "iblog.pro/condor/protos"
 	Virsh "iblog.pro/cobra/core/virshgrpc"
@@ -34,13 +35,14 @@ func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%v", err), }).Error("System Error in main()")
+		os.Exit(1)
 	}
 	s := grpc.NewServer()
 	pb.RegisterVirshServer(s, &Virsh.Server{})
-	log.Printf("server listening at %v", lis.Addr())
+	logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("server listening at %v", lis.Addr()), }).Error("System message in main()")
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%v", err), }).Error("System Error in main()")
 	}
 
 
