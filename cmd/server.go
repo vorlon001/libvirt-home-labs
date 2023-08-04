@@ -15,10 +15,10 @@ import (
 	"net"
 	"os"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
+        logs "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/logs"
 	"google.golang.org/grpc"
-	pb "iblog.pro/condor/protos"
-	Virsh "iblog.pro/cobra/core/virshgrpc"
+	pb "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/protos"
+	Virsh "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/core/virshgrpc"
 )
 
 var (

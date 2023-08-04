@@ -12,13 +12,13 @@ import (
 	"context"
 	"flag"
         "github.com/sirupsen/logrus"
-        logs "iblog.pro/cobra/logs"
+        logs "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/logs"
 	"time"
 	"os"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	pb "iblog.pro/condor/protos"
+	pb "gitlab.iblog.pro/cobra/libvirtgrpc/internal/cobra/protos"
 )
 
 const (
