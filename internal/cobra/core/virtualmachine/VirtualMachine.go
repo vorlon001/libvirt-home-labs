@@ -17,6 +17,20 @@ import (
 )
 
 
+type VirtualMachineInterface interface {
+	VirtualMachineState(id string) (string, error)
+	VirtualMachineCreate(xmlTemplate string) (string, error)
+	VirtualMachineDelete(id string) (string, error)
+	VirtualMachineSoftReboot(id string) (string, error)
+	VirtualMachineHardReboot(id string) (string, error)
+	VirtualMachineShutdown(id string) (string, error)
+	VirtualMachineShutoff(id string) (string, error)
+	VirtualMachineStart(id string) (string, error)
+	VirtualMachinePause(id string) (string, error)
+	VirtualMachineResume(id string) (string, error)
+	GetLibvirt() *libvirt.Libvirt
+}
+
 type VirtualMachine struct {
         CPUCount uint16
         CPUTime  uint64
@@ -24,6 +38,11 @@ type VirtualMachine struct {
         MaxMemoryBytes uint64
         State Model.VirtState
         Libvirt *libvirt.Libvirt
+}
+
+
+func (ret *VirtualMachine) GetLibvirt() *libvirt.Libvirt {
+	return ret.Libvirt
 }
 
 /* will be depricated in grpc version */
@@ -41,7 +60,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
 	domain.VirtualMachineState(core.VMid)
 
 
-        doms, err := domain.Libvirt.Domains()
+        doms, err := domain.GetLibvirt().Domains()
         if err != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                 return
@@ -50,7 +69,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
         for _,j := range doms {
                 if j.Name == core.VMid {
 
-                        domainGetXMLDesc, err := domain.Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        domainGetXMLDesc, err := domain.GetLibvirt().DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                                 return
@@ -84,7 +103,7 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMachineState() {
         }
 }
 
-func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
+func (ret *VirtualMachine) MachineMigrate(id string, toMove string) {
 
         core := store.Singleton[Model.Core]()
         logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
@@ -111,11 +130,11 @@ func (ret *VirtualMachine) RootSubCmdvirtualMachineMigrate() {
 		            libvirt.MigrateAutoConverge |
 		            libvirt.MigrateNonSharedDisk
 
-        dom, err := ret.Libvirt.DomainLookupByName(core.VMid)
+        dom, err := ret.Libvirt.DomainLookupByName(id)
         if err != nil {
             logs.Log.Fatalf("failed to lookup domain: %v", err)
         }
-        dconnuri := []string{ fmt.Sprintf("qemu+ssh://root@%s/system",core.ToMove)}
+        dconnuri := []string{ fmt.Sprintf("qemu+ssh://root@%s/system", toMove)}
         if e, err := ret.Libvirt.DomainMigratePerform3Params( dom, dconnuri,
                                                               []libvirt.TypedParam{}, []byte{}, flags); err != nil {
 		    logs.Log.Fatalf("unexpected live migration error: %v", err)
@@ -328,7 +347,7 @@ func (ret *VirtualMachine) VirtualMachineResume(id string) (string, error) {
 }
 
 
-func Virtinit() (*VirtualMachine, error) {
+func Virtinit() (VirtualMachineInterface, error) {
 	v := VirtualMachine{}
         v.Libvirt = libvirt.NewWithDialer(dialers.NewLocal(dialers.WithLocalTimeout(time.Second * 2)))
         if err := v.Libvirt.Connect(); err != nil {

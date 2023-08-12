@@ -42,6 +42,7 @@ const (
 	Virsh_MachineStart_FullMethodName      = "/virsh.Virsh/MachineStart"
 	Virsh_MachinePause_FullMethodName      = "/virsh.Virsh/MachinePause"
 	Virsh_MachineResume_FullMethodName     = "/virsh.Virsh/MachineResume"
+	Virsh_MachineMigrate_FullMethodName    = "/virsh.Virsh/MachineMigrate"
 )
 
 // VirshClient is the client API for Virsh service.
@@ -57,6 +58,7 @@ type VirshClient interface {
 	MachineStart(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachinePause(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
 	MachineResume(ctx context.Context, in *VirshRequest, opts ...grpc.CallOption) (*VirshReply, error)
+	MachineMigrate(ctx context.Context, in *VirshMachineMigrate, opts ...grpc.CallOption) (*VirshReply, error)
 }
 
 type virshClient struct {
@@ -148,6 +150,15 @@ func (c *virshClient) MachineResume(ctx context.Context, in *VirshRequest, opts 
 	return out, nil
 }
 
+func (c *virshClient) MachineMigrate(ctx context.Context, in *VirshMachineMigrate, opts ...grpc.CallOption) (*VirshReply, error) {
+	out := new(VirshReply)
+	err := c.cc.Invoke(ctx, Virsh_MachineMigrate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VirshServer is the server API for Virsh service.
 // All implementations must embed UnimplementedVirshServer
 // for forward compatibility
@@ -161,6 +172,7 @@ type VirshServer interface {
 	MachineStart(context.Context, *VirshRequest) (*VirshReply, error)
 	MachinePause(context.Context, *VirshRequest) (*VirshReply, error)
 	MachineResume(context.Context, *VirshRequest) (*VirshReply, error)
+	MachineMigrate(context.Context, *VirshMachineMigrate) (*VirshReply, error)
 	mustEmbedUnimplementedVirshServer()
 }
 
@@ -194,6 +206,9 @@ func (UnimplementedVirshServer) MachinePause(context.Context, *VirshRequest) (*V
 }
 func (UnimplementedVirshServer) MachineResume(context.Context, *VirshRequest) (*VirshReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MachineResume not implemented")
+}
+func (UnimplementedVirshServer) MachineMigrate(context.Context, *VirshMachineMigrate) (*VirshReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MachineMigrate not implemented")
 }
 func (UnimplementedVirshServer) mustEmbedUnimplementedVirshServer() {}
 
@@ -370,6 +385,24 @@ func _Virsh_MachineResume_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Virsh_MachineMigrate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VirshMachineMigrate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VirshServer).MachineMigrate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Virsh_MachineMigrate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VirshServer).MachineMigrate(ctx, req.(*VirshMachineMigrate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Virsh_ServiceDesc is the grpc.ServiceDesc for Virsh service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -412,6 +445,10 @@ var Virsh_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MachineResume",
 			Handler:    _Virsh_MachineResume_Handler,
+		},
+		{
+			MethodName: "MachineMigrate",
+			Handler:    _Virsh_MachineMigrate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

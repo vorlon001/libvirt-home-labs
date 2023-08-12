@@ -59,22 +59,30 @@ service Virsh {
     option (google.api.http) = {
       post: "/api/v1/Virsh/Resume/{vmname}"
     };}
-
+  rpc MachineMigrate (VirshMachineMigrate) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Migrate/{vmname}"
+    };}
 }
 
-// The request message containing the user's name.
 message VirshRequest {
   string vmname = 1;
 }
 
-// The request message containing the user's name.
+message VirshMachineMigrate {
+  string vmname = 1;
+  string tomove = 2;
+}
+
+
 message VirshCreateRequest {
   string xml = 1;
 }
 
-
-// The response message containing the greetings
 message VirshReply {
   string message = 1;
   int32 code = 2;
 }
+
+
+

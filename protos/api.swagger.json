@@ -74,6 +74,33 @@
         ]
       }
     },
+    "/api/v1/Virsh/Migrate/{vmname}": {
+      "post": {
+        "operationId": "Virsh_MachineMigrate",
+        "responses": {
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vmname",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tomove",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
     "/api/v1/Virsh/Pause/{vmname}": {
       "post": {
         "operationId": "Virsh_MachinePause",
@@ -240,8 +267,7 @@
           "type": "integer",
           "format": "int32"
         }
-      },
-      "title": "The response message containing the greetings"
+      }
     }
   }
 }

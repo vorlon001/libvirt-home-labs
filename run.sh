@@ -18,5 +18,5 @@
 #go mod tidy
 #go mod download github.com/grpc-ecosystem/grpc-gateway/v2
 
-#go build -o ./bin/client ./cmd/client.go
+go build -o ./bin/client ./cmd/client.go
 go build -o ./bin/server ./cmd/server.go
