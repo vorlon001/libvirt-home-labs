@@ -16,4 +16,4 @@ go get gopkg.in/yaml.v2
 
 go mod tidy -e
 
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=33.5.2'" -o ../Cobra ./cmd
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=33.5.3'" -o ../Cobra ./cmd
