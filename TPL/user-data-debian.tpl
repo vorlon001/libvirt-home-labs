@@ -54,6 +54,12 @@ write_files:
  - content: |{{range $key, $element := .ReadFromFile "TPL/pip-conf.tpl" }}
     {{ $element }}{{end}}
    path: /etc/pip.conf
+ - content: |
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}} main
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-updates main
+    deb {{.Config.NEXUSREPO}} {{.Config.VMREPO}}-backports main
+    deb {{.Config.NEXUSREPOSEC}} {{.Config.VMREPO}}-security main
+   path: /etc/apt/sources.list
 
 ntp:
   enabled: true

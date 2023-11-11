@@ -36,6 +36,17 @@ case $(hostname) in
   node4)
     OCTET=180
     ;;
+  node5)
+    OCTET=140
+    MEMORY=12288
+    NUMVM=4
+    ;;
+  node6)
+    OCTET=130
+    MEMORY=12288
+    NUMVM=4
+    ;;
+
   *)
     echo -n "unknown"
     exit 1
@@ -69,6 +80,19 @@ case $(hostname) in
                 initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
         done
     ;;
+  node5)
+        for i in {140..143};
+        do
+                initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
+        done
+    ;;
+  node6)
+        for i in {130..133};
+        do
+                initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
+        done
+    ;;
+
   *)
     echo -n "unknown"
     exit 1

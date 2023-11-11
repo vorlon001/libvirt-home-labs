@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-export GOLANG_VERSION="1.20.6"
+export GOLANG_VERSION="1.21.3"
 export GOPROXY='https://nexus3.iblog.pro/repository/go-proxy/'
 export GONOSUMDB="https://gitlab.iblog.pro/*"
 export GONOPROXY="https://gitlab.iblog.pro/*"
@@ -16,4 +16,4 @@ go get gopkg.in/yaml.v2
 
 go mod tidy -e
 
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=33.0.0'" -o ../Cobra .
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=33.5.2'" -o ../Cobra ./cmd

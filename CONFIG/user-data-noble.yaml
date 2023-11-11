@@ -28,13 +28,13 @@ config:
   ROOT_CERT_PATH: CERT/root.iblog.pro.crt
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
-  USER_DATA_TPL_PATH: TPL/user-data.tpl
+  USER_DATA_TPL_PATH: TPL/user-data-ubuntu.tpl
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: lunar-server-cloudimg-amd64.img
+  IMAGENAME: noble-server-cloudimg-amd64.img
   VMNAME_FQDN: 'cloud.local'
-  VM_REPO: lunar
+  VM_REPO: noble
   VM_TEMPLATE: TPL/vm.template.xml
   VMPATH: '/cloud/KVM'
   VMIMAGEPATH: '/KVM/IMAGES'
@@ -56,17 +56,15 @@ network:
         search: cloud.local
       netmask: 24
       network: 192.168.200.
-      netmask6: 64
-      network6: "2001:db8:200:1234::"
     '400':
-      netmask6: 64
-      network6: "2001:db8:400:1234::"
+      netmask: 24
+      network: 192.168.201.
     '600':
-      netmask6: 64
-      network6: "2001:db8:600:1234::"
+      netmask: 24
+      network: 192.168.202.
     '800':
-      netmask6: 64
-      network6: "2001:db8:800:1234::"
+      netmask: 24
+      network: 192.168.203.
   magic_mac: fa:16:3e
 pgk:
 - apt-transport-https
@@ -89,6 +87,9 @@ ssh-keys:
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEfoexTW+YG5avvLoOen1YT4QaC5w+zVlp9giXb2nF3zO/I7EkVvH8qBpkt9m/Iz6SSBHQb59tL553YKG8zM5qPA4noFeNcdGTvmYFCAYXii1c9VRzChIxwOL3AWB/gGGjY1WFr6ddOrtZUmYk39OsVnlENaLes/ti0eLYFyRuzumLjO+inYccB/URmgLNMnPfgQhIZC4yC+34PmABDRJDWNeM8YFNrzuPZkOMlARW7uiBzWokpU7SKZlJmJxjIU95w2ofOPzN7rlbexfGO7NRxcx5QSgIPPsH43cWVpQ2fwROiVrjZmUTCXOgKYI5cOMDCG9s2V+VY3I2ccIZidT2/hgfs6Nv55unsWQYiSYWEah79IAiygSuSN32WwCcfDEa1C0rhmORSS4xQyZ/Zj1fxXuuOWCiRqGNDX+AfeSRtABnzfqjFdIUrW+LKdwpkUnSnZX0j0a/h+MIF7GrZ0OabZBo+/DOOYcZnSqViWJkhyV+MUqa2C7pGfLuCA4lMHs= root@node2
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQD16epB9ZzdkY/Opqqc4wQ5r8gkXswQ1P4ei8JpFZ9g47VRuhkqvDZiCCpBF6N8s99aGRUo322RDMGYsNjnNGbQmJOoIUhWLSztr3UU9o1xinddnM6fY5iXO04waRdzKugOuleqGm8G+we7JhXoJ5aaJywvD5ZW4rZGxVJJaZqeO9f84ZkZdU82Y4uWU71JA5/5R7NSHq1McjhcytgTTb1OeqBo4W9lS75Mogd5X1MIR4rpVlHw0Ng7phUXA8ebrhF3MXItMXqeRBZBbriQ96HOt+MZHplBo3UBd6vIpVWisLXqwEt0XIQ5OQhmUTseQr07GdfZrajIwTC7QLMz5hCXCOusGJuUu+NfsRe86pIgV/NZRTB8gsvmQgPcCH2m8ObF+mFGZ0Vd/SZx4Rr/NliDFD7CNYwKLWjco4y9yCp7ov31gC09HGXncpbUh58YIDS+UIIGkm/2v5/VBDtcaApRGhQye/3xZXcIorjzVlVvRkvfXLO0msZmmQhBHXoLd1c= root@node3
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDKpSGIjiPJh1M/1mhFiTbLSqhhBqPl0o809dmZWg68YQYA/SvQGzRB4p9FCjgz2CN0Ynk2oWTSZ361v3J3KcA0ff9+/89OPEWSaBS03XSkEPVOa4L7ahCrSpR+Hv9nfCLt/sYF3UAQ0y+/nGcTMb2q60zzCgsYKiF4AT2Gqb9JuIWnUBciQ5mRPE3r2+eKTzhytM2/huTAgCnEFhUBZDafLo8vtyc+LUkIj55PVi2AL20e/IaTkiY2XAw/uwn04xRkFl63Xkkk+XLQBu8V4QztbgUV74H0TDbejt76a2l6gfKDdQBuY0oD6Ym6JPua65s7/WGNDqEQzN/ITwMf68azLmO5LBGHugjLGkABbsTscyq9tnHM0hof3KvK3WjbBRx27r6Jk1iJBx72RlH0FbxsCfJ6jtpqM283f3LGakTUZ8BEAFRPQ9xirSzX/DB90OucxH8ANcQjeRT+GUxN3dEFA5fsVAgEBZQ0vG5C70Me+MUj0rRPCoqa9TflaYy6Ptk= root@node1
+- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3RLpE9X1Pq/IyaQ+J8DtCr1HfqqImVSVoL19uQXhMPnkjptx9jiOKTqowRN1DSaY+0lWOTA5UyogJc/v8LuRKHIKZVCzsYjzljy6WIkQKs+OdT4aXwhwYMQkI+K2A4l+RKjpkA1uTqBGtkWvoaVRNd8eGVtqrD+zmrnYqRxM+qS8szOLHal3584JTDvCJYdNbm9N/uxfQzNgC5jeZAUEEEi61VqGYbCn+kPa1Xvip8DvQrtxWyrfzbCf9R90fYRhu0TPZ73dkbv1laEtJXbgeL19CYYhRmEz1XUfkBzPsiGSKRUDriZgtoZKIGLBF4hpv5EbV7SsATZbCjVdyOCAN8Vs34ACIEqf/6K1EshzlLkW8xJc/2pfPQbjPzS67dqMDm/dPyHjvUWNUymCxQpe14ZCioWwkVFkHHQOuQtpsNix0tHTcJjOJqLP3MW/A2bqfbhQbIXiW6QDwx0QMLUgYXNoB2OBqvhdBZBG/At4HB6cMg5bavDmwqoUSU3eqcVc= root@node5
+- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCph5JFjyXXEJtESZLvy1RSfhDzj3GY2o2tA6x5Mhs9LAkJ3ZCnqtVaoY04xLQglqifC1tr8f926DuR5fsJCy0pnZTUQGrsD0IfysuIv1lANt1tkxkdYN0QObOtmgKszUlebji7J5qAoaVbveMH1p8KgEPaci3ZqcqrAI/kGch3/cn+0V/QS0qVca+kN92wN7SA0mVSbdTf118Au7HoatQb1E14bC6BiaRjPI744jxjuGeXSrUh1eIVYUeKEdXW8h4+QYQtiwy6AgIcJUiLZkJRb030D3/KuLDX29Kx653U/QvJo2Xeq01MgTu67LyGIW4dmCb4Mm3NA2zr5siMYxV0kbIYmgZY2hoVnQkOyrBDf6VU84ZAtnFstr9mB9Qkbb5VPMVtnQITtxzheOqxg96g55BKZ6Cxi0Md6whSRP5vcRWRwAkLf1kUU68hNKykXWDt5h7yOY65U1rUdSkP5IlrhQxfMKzT9y38boqed/tz0ttrMEjUxj+CL74uh3CuNtc= root@node6
+
 vm-disk:
     - tmpl: "{{.Config.VMPATH}}/{{.VMNAME}}.qcow2"
     - tmpl: "{{.Config.VMPATH}}/{{.VMNAME}}-seed.qcow2"

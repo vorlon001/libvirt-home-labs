@@ -11,13 +11,13 @@ function initvm {
 #initvm node156 5 8 50 156 30 lunar
 #exit
 
-MEMORY=8192
+MEMORY=16384
 CORE=5
 ROOTFS_SIZE=30
 UBUNNTU=jammy
 VMNAME=node
 NUMVM=1
-DISKSIZE=30
+DISKSIZE=50
 
 case $(hostname) in
 
@@ -36,6 +36,13 @@ case $(hostname) in
   node4)
     OCTET=180
     ;;
+  node5)
+    OCTET=140
+    ;;
+  node6)
+    OCTET=130
+    ;;
+
   *)
     echo -n "unknown"
     exit 1
@@ -69,7 +76,20 @@ case $(hostname) in
                 initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
         done
     ;;
+  node5)
+        for i in {140..140};
+        do
+                initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
+        done
+    ;;
+  node6)
+        for i in {130..130};
+        do
+                initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
+        done
+    ;;
   *)
+
     echo -n "unknown"
     exit 1
     ;;

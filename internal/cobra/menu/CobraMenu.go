@@ -505,7 +505,7 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
 			}
 			logs.Log.WithFields(logrus.Fields{ "renderXML": renderXML, }).Info("RootSubCmdattachDiskVM")
 
-			cmdtmpl := `qemu-img create -f qcow2 {{.Config.VMPATH}}/{{.VMNAME}}/{{.VMNAME}}-disk{{.DISKID}}.qcow2 {{.EXT_DISK_SIZE}}G`
+			cmdtmpl := `qemu-img create -f qcow2 {{.Config.VMPATH}}/{{.VMNAME}}-disk{{.DISKID}}.qcow2 {{.EXT_DISK_SIZE}}G`
 			renderCmd, err := c.TemplateRender(cmdtmpl, *c)
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachDiskVM")
