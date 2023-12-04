@@ -1,0 +1,88 @@
+// Copyright 2015 gRPC authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+option go_package = "iblog.pro/cobra/server";
+
+option objc_class_prefix = "HLW";
+
+package virsh;
+import "google/api/annotations.proto";
+
+// The greeting service definition.
+service Virsh {
+  rpc MachineState (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      get: "/api/v1/Virsh/State/{vmname}"
+    };}
+  rpc MachineCreate (VirshCreateRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Create"
+    };}
+  rpc MachineDelete (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/Virsh/Delete/{vmname}"
+    };}
+  rpc MachineSoftReboot (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/SoftReboot/{vmname}"
+    };}
+  rpc MachineHardReboot (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/HardReboot/{vmname}"
+    };}
+  rpc MachineShutdown (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Shutdown/{vmname}"
+    };}
+  rpc MachineStart (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Start/{vmname}"
+    };}
+  rpc MachinePause (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Pause/{vmname}"
+    };}
+  rpc MachineResume (VirshRequest) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Resume/{vmname}"
+    };}
+  rpc MachineMigrate (VirshMachineMigrate) returns (VirshReply) {
+    option (google.api.http) = {
+      post: "/api/v1/Virsh/Migrate/{vmname}"
+    };}
+}
+
+message VirshRequest {
+  string vmname = 1;
+}
+
+message VirshMachineMigrate {
+  string vmname = 1;
+  string tomove = 2;
+}
+
+
+message VirshCreateRequest {
+  string xml = 1;
+}
+
+message VirshReply {
+  string message = 1;
+  int32 code = 2;
+}
+
+
+

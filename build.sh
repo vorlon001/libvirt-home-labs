@@ -1,10 +1,6 @@
 #!/usr/bin/bash
 
-export GOLANG_VERSION="1.21.3"
-export GOPROXY='https://nexus3.iblog.pro/repository/go-proxy/'
-export GONOSUMDB="https://gitlab.iblog.pro/*"
-export GONOPROXY="https://gitlab.iblog.pro/*"
-#export GOSUMDB='sum.golang.org https://nexus.iblog.pro/repository/golang-sum/'
+export GOLANG_VERSION="1.21.4"
 
 go get github.com/digitalocean/go-libvirt
 go get github.com/digitalocean/go-libvirt/socket/dialers
@@ -16,4 +12,6 @@ go get gopkg.in/yaml.v2
 
 go mod tidy -e
 
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=33.5.3'" -o ../Cobra ./cmd
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'" -o ../Cobra ./cli
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'" -o ./client.grpc ./cmd.grpc/client.go
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'"  -o ./server.grpc ./cmd.grpc/server.go

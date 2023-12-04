@@ -58,8 +58,16 @@ func (f *CobraMenu) RootSubCmdvirtualMachineState() *cobra.Command {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineState Run with args")
 
-	VirtualMachine.Virtinit().RootSubCmdvirtualMachineMachineState()
-
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineMachineState()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineMachineState")
+            return
+        }
     },
   }
         return subvirtualMachineState
@@ -75,7 +83,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineMigrate() *cobra.Command {
         core := store.Singleton[Model.Core]()
         logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
         logs.Log.WithFields(logrus.Fields{ "core.toMove": core.ToMove, "args": args,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
-        VirtualMachine.Virtinit().RootSubCmdvirtualMachineMigrate()
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineMigrate(core.VMid, core.ToMove)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineMigrate")
+            return
+        }
+
 
     },
   }
@@ -90,7 +108,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineSoftReboot() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineSoftReboot Run with args")
-	VirtualMachine.Virtinit().VirtualMachineSoftReboot(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineSoftReboot(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineSoftReboot")
+            return
+        }
+
     },
   }
         return subvirtualMachineSoftReboot
@@ -103,7 +131,18 @@ func (f *CobraMenu) RootSubCmdvirtualMachineHardReboot() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineHardReboot Run with args")
-	VirtualMachine.Virtinit().VirtualMachineHardReboot(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+
+        _, err = virt.VirtualMachineHardReboot(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineHardReboot")
+            return
+        }
+
     },
   }
         return subvirtualMachineHardReboot
@@ -116,7 +155,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineShutdown() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineShutdown Run with args")
-	VirtualMachine.Virtinit().VirtualMachineShutdown(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineShutdown(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineShutdown")
+            return
+        }
+
     },
   }
         return subvirtualMachineShutdown
@@ -129,7 +178,18 @@ func (f *CobraMenu) RootSubCmdvirtualMachineShutoff() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineShutoff Run with args")
-	VirtualMachine.Virtinit().VirtualMachineShutoff(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+
+        _, err = virt.VirtualMachineShutoff(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineShutoff")
+            return
+        }
+
     },
   }
         return subvirtualMachineShutoff
@@ -142,7 +202,18 @@ func (f *CobraMenu) RootSubCmdvirtualMachineStart() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineStart Run with args")
-	VirtualMachine.Virtinit().VirtualMachineStart(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+
+        _, err = virt.VirtualMachineStart(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineStart")
+            return
+        }
+
     },
   }
         return subvirtualMachineStart
@@ -155,7 +226,18 @@ func (f *CobraMenu) RootSubCmdvirtualMachinePause() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachinePause Run with args")
-	VirtualMachine.Virtinit().VirtualMachinePause(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+
+        _, err = virt.VirtualMachinePause(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachinePause")
+            return
+        }
+
     },
   }
         return subvirtualMachinePause
@@ -168,7 +250,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineResume() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineResume Run with args")
-	VirtualMachine.Virtinit().VirtualMachineResume(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineResume(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineResume")
+            return
+        }
+
     },
   }
         return subvirtualMachineResume
@@ -181,7 +273,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineCreate() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.XmlTemplate": core.XmlTemplate, "args": args,}).Info("Inside RootSubCmdvirtualMachineCreate Run with args")
-	VirtualMachine.Virtinit().VirtualMachineCreate(core.XmlTemplate)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineCreate(core.XmlTemplate)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineCreate")
+            return
+        }
+
     },
   }
         return subvirtualMachineCreate
@@ -194,7 +296,17 @@ func (f *CobraMenu) RootSubCmdvirtualMachineDelete() *cobra.Command {
     Run: func(cmd *cobra.Command, args []string) {
         core := store.Singleton[Model.Core]()
 	logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineDelete Run with args")
-        VirtualMachine.Virtinit().VirtualMachineDelete(core.VMid)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineDelete(core.VMid)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineDelete")
+            return
+        }
+
     },
   }
         return subvirtualMachineDelete
@@ -211,10 +323,29 @@ func (f *CobraMenu) RootSubCmdvirtualMachineDestroy() *cobra.Command {
 		logs.Log.WithFields(logrus.Fields{ "core.VMid": core.VMid, "args": args,}).Info("Inside RootSubCmdvirtualMachineDestroy Run with args")
 
 		core = store.Singleton[Model.Core]()
-                VirtualMachine.Virtinit().VirtualMachineShutoff(core.VMid)
+                virt, err := VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+                _, err = virt.VirtualMachineShutoff(core.VMid)
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineShutoff")
+                    return
+                }
 
                 core = store.Singleton[Model.Core]()
-                VirtualMachine.Virtinit().VirtualMachineDelete(core.VMid)
+                virt, err =VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+                _, err = virt.VirtualMachineDelete(core.VMid)
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineDelete")
+                    return
+                }
+
           },
         }
         return subvirtualMachineDestroy
@@ -243,17 +374,55 @@ func initVM(increment int) {
 
 	core = store.Singleton[Model.Core]()
 	logs.Log.Info("Run Virtinit().VirtualMachineCreate(core.XmlTemplate) in initVM")
-	VirtualMachine.Virtinit().VirtualMachineCreate(c.XmlTemplate)
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineCreate(c.XmlTemplate)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineCreate")
+            return
+        }
 	logs.Log.Info("Run Virtinit().VirtualMachineCreate(core.XmlTemplate) in initVM Done!")
 
         core = store.Singleton[Model.Core]()
-        VirtualMachine.Virtinit().VirtualMachineState(c.VMNAME)
+        virt, err = VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineState(c.VMNAME)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init virt.VirtualMachineState()")
+            return
+        }
+
 
         core = store.Singleton[Model.Core]()
-        VirtualMachine.Virtinit().VirtualMachineStart(c.VMNAME)
+        virt, err = VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineStart(c.VMNAME)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineStart")
+            return
+        }
 
         core = store.Singleton[Model.Core]()
-        VirtualMachine.Virtinit().VirtualMachineState(c.VMNAME)
+        virt, err = VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineState(c.VMNAME)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init virt.VirtualMachineState()")
+            return
+        }
+
 
 	stop := 0
 	for stop==0 {
@@ -261,7 +430,13 @@ func initVM(increment int) {
 		logs.Log.WithFields(logrus.Fields{ "c.VMNAME": c.VMNAME, }).Info("Sleep 8sec.....")
 		time.Sleep(8 * time.Second)
 
-		stopCodes, err := VirtualMachine.Virtinit().Libvirt.DomainState(c.VMNAME)
+                virt, err := VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+
+		stopCodes, err := virt.GetLibvirt().DomainState(c.VMNAME)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, "c.VMNAME": c.VMNAME, }).Info("Cobra Event Error")
 			return
@@ -279,7 +454,17 @@ func initVM(increment int) {
 	logs.Log.WithFields(logrus.Fields{ "VM Status": c.VMNAME,}).Info("VM is DomainShutoff")
 
         core = store.Singleton[Model.Core]()
-        VirtualMachine.Virtinit().VirtualMachineStart(c.VMNAME)
+        virt, err =VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        _, err = virt.VirtualMachineStart(c.VMNAME)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineStart")
+            return
+        }
+
 
 	logs.Log.WithFields(logrus.Fields{ "VM Status": c.VMNAME,}).Info("Starting VM")
 
@@ -288,7 +473,13 @@ func initVM(increment int) {
 
 		logs.Log.WithFields(logrus.Fields{ "c.VMNAME": c.VMNAME, }).Info("Sleep 8sec.....")
                 time.Sleep(8 * time.Second)
-                stopCodes, err := VirtualMachine.Virtinit().Libvirt.DomainState(c.VMNAME)
+                virt, err = VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+
+                stopCodes, err := virt.GetLibvirt().DomainState(c.VMNAME)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, "c.VMNAME": c.VMNAME, }).Info("Cobra Event Error")
 			return
@@ -320,8 +511,12 @@ func initVM(increment int) {
         time.Sleep(20 * time.Second)
 
 
-
-	doms, err := VirtualMachine.Virtinit().Libvirt.Domains()
+        virt, err =VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+	doms, err := virt.GetLibvirt().Domains()
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 		return
@@ -339,7 +534,13 @@ func initVM(increment int) {
 
 			disk_seed := fmt.Sprintf(*CDDiskTemplate,c.VMDisk[1].Path)
 			logs.Log.WithFields(logrus.Fields{ "VMName": c.VMNAME, "XML": disk_seed,}).Info("VM change")
-			err = VirtualMachine.Virtinit().Libvirt.DomainDetachDeviceFlags(dom, disk_seed, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
+                        virt, err := VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+
+			err = virt.GetLibvirt().DomainDetachDeviceFlags(dom, disk_seed, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 				return
@@ -350,7 +551,16 @@ func initVM(increment int) {
 			logs.Log.WithFields(logrus.Fields{ "c.VMNAME": c.VMNAME, }).Info("Sleep 10sec.....")
 			time.Sleep(10 * time.Second)
 			logs.Log.WithFields(logrus.Fields{ "VMName": c.VMNAME,}).Info("Reboot VM")
-			VirtualMachine.Virtinit().VirtualMachineHardReboot(c.VMNAME)
+                        virt, err  = VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+			_, err = virt.VirtualMachineHardReboot(c.VMNAME)
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineStart")
+                            return
+                        }
 
 			stop = 0
 			for stop==0 {
@@ -460,7 +670,12 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
         var c *Virsh.LibVirtVM
         c = Virsh.LoadConfigVM(core,0)
 
-        doms, err := VirtualMachine.Virtinit().Libvirt.Domains()
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        doms, err := virt.GetLibvirt().Domains()
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 		return
@@ -472,7 +687,13 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
                         dom := j
 			fmt.Printf("%#v\n", dom);
 
-                        domainGetXMLDesc, err := VirtualMachine.Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        virt, err =VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+
+                        domainGetXMLDesc, err := virt.GetLibvirt().DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 				return
@@ -525,7 +746,13 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
 
 			fmt.Printf("%s\n",renderXML)
 			fmt.Printf("%#v\n", dom)
-                        err = VirtualMachine.Virtinit().Libvirt.DomainAttachDeviceFlags(dom, renderXML, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
+                        virt, err =VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+
+                        err = virt.GetLibvirt().DomainAttachDeviceFlags(dom, renderXML, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
 
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachDiskVM run renderCmd")
@@ -559,7 +786,12 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
         var c *Virsh.LibVirtVM
         c = Virsh.LoadConfigVM(core,0)
 
-        doms, err := VirtualMachine.Virtinit().Libvirt.Domains()
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        doms, err := virt.GetLibvirt().Domains()
         if err != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                 return
@@ -571,7 +803,12 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
                         dom := j
                         fmt.Printf("%#v\n", dom);
 
-                        domainGetXMLDesc, err := VirtualMachine.Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        virt, err =VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+                        domainGetXMLDesc, err := virt.GetLibvirt().DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                                 return
@@ -601,7 +838,13 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
                         fmt.Printf("%s\n",renderXML)
                         fmt.Printf("%#v\n", dom)
 
-                        err = VirtualMachine.Virtinit().Libvirt.DomainDetachDeviceFlags(dom, renderXML, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
+                        virt, err := VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+
+                        err = virt.GetLibvirt().DomainDetachDeviceFlags(dom, renderXML, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachDiskVM run renderCmd")
                                 return
@@ -632,8 +875,12 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
         var c *Virsh.LibVirtVM
         c = Virsh.LoadConfigVM(core,0)
 
-
-        doms, err := VirtualMachine.Virtinit().Libvirt.Domains()
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        doms, err := virt.GetLibvirt().Domains()
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 		return
@@ -643,8 +890,12 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
                 if j.Name == core.VMNAME {
                         dom := j
 
-
-                        domainGetXMLDesc, err := VirtualMachine.Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        virt, err := VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+                        domainGetXMLDesc, err := virt.GetLibvirt().DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
 			if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
 				return
@@ -697,7 +948,12 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
                         }
 
                         logs.Log.WithFields(logrus.Fields{ "VMName": core.VMNAME, "XML": renderInterface,}).Info("VM change")
-                        err = VirtualMachine.Virtinit().Libvirt.DomainAttachDeviceFlags(dom, renderInterface, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
+                        virt, err = VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+                        err = virt.GetLibvirt().DomainAttachDeviceFlags(dom, renderInterface, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
                         if err != nil {
 				logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdattachInerfaceVM run renderCmd")
 				return
@@ -729,8 +985,12 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
         var c *Virsh.LibVirtVM
         c = Virsh.LoadConfigVM(core,0)
 
-
-        doms, err := VirtualMachine.Virtinit().Libvirt.Domains()
+        virt, err := VirtualMachine.Virtinit()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            return
+        }
+        doms, err := virt.GetLibvirt().Domains()
         if err != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                 return
@@ -740,8 +1000,12 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
                 if j.Name == core.VMNAME {
                         dom := j
 
-
-                        domainGetXMLDesc, err := VirtualMachine.Virtinit().Libvirt.DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
+                        virt, err := VirtualMachine.Virtinit()
+                        if err != nil {
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            return
+                        }
+                        domainGetXMLDesc, err := virt.GetLibvirt().DomainGetXMLDesc(j, libvirt.DomainXMLSecure)
                         if err != nil {
                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
                                 return
@@ -785,7 +1049,12 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
                                         }
 
                                         logs.Log.WithFields(logrus.Fields{ "VMName": core.VMNAME, "XML": renderInterface,}).Info("VM change")
-                                        err = VirtualMachine.Virtinit().Libvirt.DomainDetachDeviceFlags(dom, renderInterface, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
+                                        virt, err := VirtualMachine.Virtinit()
+                                        if err != nil {
+                                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                                            return
+                                        }
+                                        err = virt.GetLibvirt().DomainDetachDeviceFlags(dom, renderInterface, uint32(libvirt.DomainDeviceModifyCurrent | libvirt.DomainDeviceModifyConfig | libvirt.DomainDeviceModifyLive))
                                         if err != nil {
                                                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("RootSubCmdDetachInerfaceVM run renderCmd")
                                                 return
@@ -812,10 +1081,28 @@ func (f *CobraMenu) RootSubCmddestroyVM() *cobra.Command {
 
 
 		core = store.Singleton[Model.Core]()
-		VirtualMachine.Virtinit().VirtualMachineShutoff(core.VMNAME)
+                virt, err := VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+		_, err = virt.VirtualMachineShutoff(core.VMNAME)
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineShutoff")
+                    return
+                }
 
 		core = store.Singleton[Model.Core]()
-		VirtualMachine.Virtinit().VirtualMachineDelete(core.VMNAME)
+                virt, err =VirtualMachine.Virtinit()
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                    return
+                }
+		_, err = virt.VirtualMachineDelete(core.VMNAME)
+                if err != nil {
+                    logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error virt.VirtualMachineDelete")
+                    return
+                }
 
     },
   }

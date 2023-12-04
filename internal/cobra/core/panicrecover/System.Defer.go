@@ -3,7 +3,7 @@ package panicrecover
 import (
 
         "encoding/json"
-        "os"
+//        "os"
 	"fmt"
         "strings"
         "runtime"
@@ -29,7 +29,7 @@ func PanicRecover() {
 func Herr(e error) {
         if e != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": strings.ReplaceAll(e.Error(), "\"", ""), }).Info("herr")
-                os.Exit(1)
+//                os.Exit(1)
         }
 }
 
