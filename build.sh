@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-export GOLANG_VERSION="1.21.4"
+export GOLANG_VERSION="1.22.0"
 
 go get github.com/digitalocean/go-libvirt
 go get github.com/digitalocean/go-libvirt/socket/dialers
@@ -12,6 +12,6 @@ go get gopkg.in/yaml.v2
 
 go mod tidy -e
 
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'" -o ../Cobra ./cli
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'" -o ./client.grpc ./cmd.grpc/client.go
-CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.2.0'"  -o ./server.grpc ./cmd.grpc/server.go
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.5.0'" -o ../Cobra ./cli
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.5.0'" -o ./client.grpc ./cmd.grpc/client.go
+CGO_ENABLED=0 go build -ldflags "-w -s -X 'main.Version=34.5.0'"  -o ./server.grpc ./cmd.grpc/server.go

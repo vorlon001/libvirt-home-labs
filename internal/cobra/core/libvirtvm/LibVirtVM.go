@@ -49,14 +49,14 @@ type LibVirtVM struct {
 }
 
 
-func (a LibVirtVM) ReadFromFile(filename string) []string {
+func (a LibVirtVM) ReadFromFile(filename string) ([]string, error) {
         contentBytes, err := ioutil.ReadFile(filename)
         if err != nil {
-            return []string{}
+            return []string{}, err
         }
         contentString := string(contentBytes)
-        return strings.Split(contentString, "\n")
-    }
+        return strings.Split(contentString, "\n"), nil
+}
 
 
 func (a *LibVirtVM) SetROOTFS_SIZE(ROOTFS_SIZE int){
@@ -70,6 +70,11 @@ func (a *LibVirtVM) SetNodeId(NodeId string){
 func (a *LibVirtVM) SetVMNAME(VMNAME string){
 	a.VMNAME = VMNAME
 }
+
+func (a *LibVirtVM) GetVMNAME() string{
+	return a.VMNAME
+}
+
 
 func (a *LibVirtVM) SetVMNAME_FQDN(VMNAME_FQDN string){
 	a.VMNAME_FQDN = VMNAME_FQDN
@@ -85,7 +90,7 @@ func (a *LibVirtVM) SetCORE(CORE int){
 }
 
 
-func (a *LibVirtVM) CreateNetworkConfig() {
+func (a *LibVirtVM) CreateNetworkConfig() error {
 
 	var networkConfigTpl string
 	networkConfigTpl = a.Config.NETWORKCONFIGTPL
@@ -95,7 +100,7 @@ func (a *LibVirtVM) CreateNetworkConfig() {
 	d, err := a.ReadFile(&networkConfigTpl)
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-		return
+		return err
 	}
 
 	logs.Log.WithFields(logrus.Fields{ "networkConfig": *d, }).Info("CreateNetworkConfig")
@@ -103,17 +108,17 @@ func (a *LibVirtVM) CreateNetworkConfig() {
         render, err := a.TemplateRender(*d, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateNetworkConfig")
-                return
+                return err
         }
 
 
         networkConfig := "network-config"
         networkConfig = fmt.Sprintf("%s%s",a.VMPath, networkConfig)
-        _ = a.WriteInFile(&networkConfig, &render)
-
+        err = a.WriteInFile(&networkConfig, &render)
+        return err
 }
 
-func (a *LibVirtVM) CreateUserData() {
+func (a *LibVirtVM) CreateUserData() error {
 
         var userDataTpl string
         userDataTpl = a.Config.USERDATATPLPATH //"user-data.tpl"
@@ -123,31 +128,30 @@ func (a *LibVirtVM) CreateUserData() {
         d2, err := a.ReadFile(&userDataTpl)
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-		return
+		return err
 	}
 
         render2, err := a.TemplateRender(*d2, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateUserData")
-                return
+                return err
         }
 
         userData := "user-data"
         userData = fmt.Sprintf("%s%s",a.VMPath, userData)
 
-        _ = a.WriteInFile(&userData, &render2)
-
-
+        err = a.WriteInFile(&userData, &render2)
+        return err
 }
 
 
-func (a *LibVirtVM) PreInitScriptVM() {
+func (a *LibVirtVM) PreInitScriptVM() error {
 
         for _,v := range a.CreateImageVM {
                 render, err := a.TemplateRender(v, *a)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-			return
+			return err
 		}
 
 		logs.Log.WithFields(logrus.Fields{ "render": render, }).Info("PreInitScriptVM")
@@ -155,7 +159,7 @@ func (a *LibVirtVM) PreInitScriptVM() {
                 out, errout, err := a.Shellout(render)
                 if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "out": out, "errout": errout, "err": err, }).Info("PreInitScriptVM")
-			return
+			return err
                 }
 
 		logs.Log.WithFields(logrus.Fields{ "out": out, }).Info("PreInitScriptVM")
@@ -164,32 +168,33 @@ func (a *LibVirtVM) PreInitScriptVM() {
         }
 
 	logs.Log.Info("PreInitScriptVM Done!")
+	return nil
 }
 
 
-func (a *LibVirtVM) AfterDeployVM() {
+func (a *LibVirtVM) AfterDeployVM() error {
 
         for _,v := range a.AfterDeploy {
                 render, err := a.TemplateRender(v, *a)
 		if err != nil {
 			logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-			return
+			return err
 		}
-
 
                 out, errout, err := a.Shellout(render)
                 if err != nil {
                         logs.Log.WithFields(logrus.Fields{ "out": out, "errout": errout, "err": err, }).Info("PreInitScriptVM")
-                        return
+                        return err
                 }
 
 		logs.Log.WithFields(logrus.Fields{ "out": out, }).Info("AfterDeployVM")
 		logs.Log.WithFields(logrus.Fields{ "errout": errout, }).Info("AfterDeployVM")
 
         }
+	return nil
 }
 
-func (a *LibVirtVM) CreateVMXML() {
+func (a *LibVirtVM) CreateVMXML() error {
 
 	logs.Log.Info("Init CreateVMXML")
 
@@ -199,42 +204,49 @@ func (a *LibVirtVM) CreateVMXML() {
         d3, err := a.ReadFile(&vmTemplateXml)
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-		return
+		return err
 	}
 
 
         render3, err := a.TemplateRender(*d3, *a)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateVMXML")
-                return
+                return err
         }
 
 
         vmXml := "vm.xml"
         vmXml = fmt.Sprintf("%s%s",a.VMPath, vmXml)
 
-        _ = a.WriteInFile(&vmXml, &render3)
+        err = a.WriteInFile(&vmXml, &render3)
+        if err != nil {
+                logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("CreateVMXML")
+                return err
+        }
 
 	core := store.Singleton[Model.Core]()
 	core.XmlTemplate = vmXml
 	a.XmlTemplate = vmXml
 
 	logs.Log.Info("CreateVMXML Done!")
+	return nil
 }
 
-func (a *LibVirtVM) getConf(filename string) *LibVirtVM {
+func (a *LibVirtVM) getConf(filename string) (*LibVirtVM, error) {
 
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "yamlFile.Get-err": err, }).Info("getConf")
+		return nil, err
 	}
 
 	err = yaml.Unmarshal(yamlFile, a)
 	if err != nil {
 		logs.Log.Fatalf("Unmarshal: %v", err)
+		return nil, err
 	}
 
-	return a
+	return a, nil
 
 }
 
@@ -260,14 +272,14 @@ func (a *LibVirtVM) Var_dump(expression ...interface{} ) {
 	fmt.Println(fmt.Sprintf("%#v", expression))
 }
 
-func (a *LibVirtVM) prettyPrint(i interface{}) string {
+func (a *LibVirtVM) prettyPrint(i interface{}) (string, error) {
 	s, err := json.MarshalIndent(i, "", "\t")
 	if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
-		return ""
+		return "", err
 	}
 
-	return string(s)
+	return string(s), nil
 }
 
 
@@ -304,7 +316,7 @@ func (a *LibVirtVM) Shellout(command string) (string, string, error) {
 
 
 
-func LoadConfigVM(core *Model.Core, increment int) *LibVirtVM {
+func LoadConfigVM(core *Model.Core, increment int) (*LibVirtVM, error) {
 
         var c LibVirtVM
 
@@ -321,20 +333,28 @@ func LoadConfigVM(core *Model.Core, increment int) *LibVirtVM {
 
 	logs.Log.WithFields(logrus.Fields{ "LibVirtVM": c, "core": core,}).Info("Inside LoadConfigVM")
 
-        c.SetVMNAME_FQDN( fmt.Sprintf("%s.%s",core.VMNAME, c.Config.VMNAMEFQDN ))
+        c.SetVMNAME_FQDN( fmt.Sprintf("%s.%s",c.GetVMNAME(), c.Config.VMNAMEFQDN ))
         c.SetROOTFS_SIZE(core.ROOTFS_SIZE)
         c.SetMEMORY(core.MEMORY*1024)
         c.SetCORE(core.CORE)
 
         for k,_ := range c.Config.INTERFACEINIT {
-                _ = c.Config.INTERFACEINIT[k].CreateMacAddress(c.Network.MagicMac)
+                err := c.Config.INTERFACEINIT[k].CreateMacAddress(c.Network.MagicMac)
+                if err != nil {
+                        logs.Log.WithFields(logrus.Fields{ "err": err,}).Info("Inside LoadConfigVM Run with args")
+                        return nil, err
+                }
 		logs.Log.WithFields(logrus.Fields{ "c.Config.INTERFACEINIT[k].GetMacAddress()": c.Config.INTERFACEINIT[k].GetMacAddress(),
 						"c.Config.INTERFACEINIT[k].MacAddress": c.Config.INTERFACEINIT[k].MacAddress,}).Info("Inside LoadConfigVM Run with args")
         }
 
 
         for k,_ := range c.VMDisk {
-                _ = c.VMDisk[k].CreatePath(c)
+                err := c.VMDisk[k].CreatePath(c)
+                if err != nil {
+        	        logs.Log.WithFields(logrus.Fields{ "err": err,}).Info("Inside LoadConfigVM Run with args")
+                	return nil, err
+	        }
 		logs.Log.WithFields(logrus.Fields{ "c.VMDisk[k]": c.VMDisk[k],}).Info("Inside LoadConfigVM Run with args")
         }
 
@@ -342,16 +362,17 @@ func LoadConfigVM(core *Model.Core, increment int) *LibVirtVM {
         VMPath, err := c.TemplateRender(VMPathTmpl, c)
         if err != nil {
 		logs.Log.WithFields(logrus.Fields{ "err": err,}).Info("Inside LoadConfigVM Run with args")
-                return nil
+                return nil, err
         }
 
 	logs.Log.WithFields(logrus.Fields{ "VMPath": VMPath,}).Info("Inside LoadConfigVM Run with args")
 
         if err := os.MkdirAll(VMPath, os.ModePerm); err != nil {
                 logs.Log.Fatal(err)
+                return nil, err
         }
 
         c.VMPath = VMPath
 
-        return &c
+        return &c, nil
 }

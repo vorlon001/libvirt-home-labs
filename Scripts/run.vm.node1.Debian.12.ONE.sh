@@ -2,26 +2,21 @@
 
 set -x
 function initvm {
-./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-
-# ./Cobra Configure attachInerfaceVM  --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-# ./Cobra Configure attachInerfaceVM  --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-# ./Cobra Configure attachInerfaceVM  --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-$7.yaml
-
+./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-debian.12.yaml
+./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-debian.12.yaml
+./Cobra Configure attachDiskVM --VMNAME $1 --CORE $2  --MEMORY $3 --ROOTFS_SIZE $4 --Octet $5  --EXT_DISK_SIZE  $6 --USER_DATA_PATH CONFIG/user-data-debian.12.yaml
 }
 
 
 #initvm node156 5 8 50 156 30 lunar
 #exit
 
-MEMORY=8192
-CORE=5
+MEMORY=16384
+CORE=8
 ROOTFS_SIZE=30
 UBUNNTU=jammy
 VMNAME=node
-NUMVM=3
+NUMVM=1
 DISKSIZE=30
 
 case $(hostname) in
@@ -44,12 +39,12 @@ case $(hostname) in
   node5)
     OCTET=140
     MEMORY=12288
-    NUMVM=4
+    NUMVM=1
     ;;
   node6)
     OCTET=130
     MEMORY=12288
-    NUMVM=4
+    NUMVM=1
     ;;
 
   *)
@@ -58,7 +53,7 @@ case $(hostname) in
     ;;
 esac
 
-./Cobra Configure initVMs --CORE $CORE --EXT_DISK_SIZE $DISKSIZE --MEMORY $MEMORY --Octet $OCTET --ROOTFS_SIZE $ROOTFS_SIZE --USER_DATA_PATH CONFIG/user-data-$UBUNNTU.yaml  --VMNAME $VMNAME$OCTET  --NumVM $NUMVM
+./Cobra Configure initVMs --CORE $CORE --EXT_DISK_SIZE $DISKSIZE --MEMORY $MEMORY --Octet $OCTET --ROOTFS_SIZE $ROOTFS_SIZE --USER_DATA_PATH CONFIG/user-data-debian.12.yaml  --VMNAME $VMNAME$OCTET  --NumVM $NUMVM
 
 case $(hostname) in
   node1)
@@ -97,6 +92,7 @@ case $(hostname) in
                 initvm $VMNAME$i ${CORE} ${MEMORY} ${DISKSIZE} ${i} ${DISKSIZE} ${UBUNNTU}
         done
     ;;
+
   *)
     echo -n "unknown"
     exit 1

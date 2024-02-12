@@ -32,9 +32,9 @@ config:
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: jammy-server-cloudimg-amd64.img
+  IMAGENAME: focal-server-cloudimg-amd64.img
   VMNAME_FQDN: 'cloud.local'
-  VM_REPO: jammy
+  VM_REPO: focal
   VM_TEMPLATE: TPL/vm.template.xml
   VMPATH: '/cloud/KVM'
   VMIMAGEPATH: '/KVM/IMAGES'
@@ -56,15 +56,17 @@ network:
         search: cloud.local
       netmask: 24
       network: 192.168.200.
+      netmask6: 64
+      network6: "2001:db8:200:1234::"
     '400':
-      netmask: 24
-      network: 192.168.201.
+      netmask6: 64
+      network6: "2001:db8:400:1234::"
     '600':
-      netmask: 24
-      network: 192.168.202.
+      netmask6: 64
+      network6: "2001:db8:600:1234::"
     '800':
-      netmask: 24
-      network: 192.168.203.
+      netmask6: 64
+      network6: "2001:db8:800:1234::"
   magic_mac: fa:16:3e
 pgk:
 - apt-transport-https

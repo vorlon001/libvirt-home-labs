@@ -359,17 +359,42 @@ func initVM(increment int) {
 	logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdinitVM")
 
 	var c *Virsh.LibVirtVM
-	c = Virsh.LoadConfigVM( core, increment)
+	c, err := Virsh.LoadConfigVM( core, increment)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error in initVM()")
+            return
+        }
+
 	// ****************************************************************
-	c.CreateNetworkConfig()
+	err = c.CreateNetworkConfig()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error in initVM()")
+            return
+        }
+
 	// ****************************************************************
-	c.CreateUserData()
+	err = c.CreateUserData()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error in initVM()")
+            return
+        }
+
 	// ****************************************************************
-	c.PreInitScriptVM()
+	err = c.PreInitScriptVM()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error in initVM()")
+            return
+        }
+
 	// ****************************************************************
 	//c.AfterDeployVM()
 	// ****************************************************************
-	c.CreateVMXML()
+	err = c.CreateVMXML()
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error in initVM()")
+            return
+        }
+
 	// ****************************************************************
 
 	core = store.Singleton[Model.Core]()
@@ -668,11 +693,15 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
         logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdattachDiskVM")
 
         var c *Virsh.LibVirtVM
-        c = Virsh.LoadConfigVM(core,0)
+        c, err := Virsh.LoadConfigVM(core,0)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdattachDiskVM()")
+            return
+        }
 
         virt, err := VirtualMachine.Virtinit()
         if err != nil {
-            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdattachDiskVM()")
             return
         }
         doms, err := virt.GetLibvirt().Domains()
@@ -689,7 +718,7 @@ func (f *CobraMenu) RootSubCmdattachDiskVM() *cobra.Command {
 
                         virt, err =VirtualMachine.Virtinit()
                         if err != nil {
-                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+                            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdattachDiskVM()")
                             return
                         }
 
@@ -784,11 +813,15 @@ func (f *CobraMenu) RootSubCmdDetachDiskVM() *cobra.Command {
         logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdDetachDiskVM")
 
         var c *Virsh.LibVirtVM
-        c = Virsh.LoadConfigVM(core,0)
+        c, err := Virsh.LoadConfigVM(core,0)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdDetachDiskVM()")
+            return
+        }
 
         virt, err := VirtualMachine.Virtinit()
         if err != nil {
-            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdDetachDiskVM()")
             return
         }
         doms, err := virt.GetLibvirt().Domains()
@@ -873,11 +906,15 @@ func (f *CobraMenu) RootSubCmdattachInerfaceVM() *cobra.Command {
         logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdattachInerfaceVM")
 
         var c *Virsh.LibVirtVM
-        c = Virsh.LoadConfigVM(core,0)
+        c, err := Virsh.LoadConfigVM(core,0)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdattachInerfaceVM()")
+            return
+        }
 
         virt, err := VirtualMachine.Virtinit()
         if err != nil {
-            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdattachInerfaceVM()")
             return
         }
         doms, err := virt.GetLibvirt().Domains()
@@ -983,13 +1020,18 @@ func (f *CobraMenu) RootSubCmdaDetachInerfaceVM() *cobra.Command {
         logs.Log.WithFields(logrus.Fields{ "core": core,}).Info("Inside RootSubCmdDetachInerfaceVM")
 
         var c *Virsh.LibVirtVM
-        c = Virsh.LoadConfigVM(core,0)
+        c, err := Virsh.LoadConfigVM(core,0)
+        if err != nil {
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdaDetachInerfaceVM()")
+            return
+        }
 
         virt, err := VirtualMachine.Virtinit()
         if err != nil {
-            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.Virtinit()")
+            logs.Log.WithFields(logrus.Fields{ "error": fmt.Sprintf("%s",err),}).Info("Error init VirtualMachine.RootSubCmdaDetachInerfaceVM()")
             return
         }
+
         doms, err := virt.GetLibvirt().Domains()
         if err != nil {
                 logs.Log.WithFields(logrus.Fields{ "err": err, }).Info("Cobra Event Error")
