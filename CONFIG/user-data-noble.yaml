@@ -14,9 +14,11 @@ command:
 - touch /etc/cloud/cloud-init.disabled
 - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o
   /usr/share/keyrings/docker-archive-keyring.gpg
-- sed -i "s/^ExecStart=\/lib\/systemd\/systemd-networkd-wait-online/ExecStart=\/lib\/systemd\/systemd-networkd-wait-online --i enp1s0 -i enp2s0/"  /usr/lib/systemd/system/systemd-networkd-wait-online.service
+- sed -i "s/^ExecStart=\/usr\/lib\/systemd\/systemd-networkd-wait-online/ExecStart=\/usr\/lib\/systemd\/systemd-networkd-wait-online --i enp1s0 -i enp2s0/"  /usr/lib/systemd/system/systemd-networkd-wait-online.service
 - cat /usr/lib/systemd/system/systemd-networkd-wait-online.service
 - apt update
+- rm /etc/apt/sources.list.d/ubuntu.sources
+- systemctl disable systemd-networkd-wait-online.service
 config:
   INTERFACE_INIT:
     - name: enp1s0
@@ -28,11 +30,11 @@ config:
   ROOT_CERT_PATH: CERT/root.iblog.pro.crt
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
-  USER_DATA_TPL_PATH: TPL/user-data-ubuntu.tpl
+  USER_DATA_TPL_PATH: TPL/user-data-ubuntu-2404.tpl
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: noble-server-cloudimg-amd64.img
+  IMAGENAME: noble-server-cloudimg-amd64.custom.img
   VMNAME_FQDN: 'cloud.local'
   VM_REPO: noble
   VM_TEMPLATE: TPL/vm.template.xml

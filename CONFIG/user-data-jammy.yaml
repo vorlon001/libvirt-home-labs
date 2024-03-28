@@ -32,7 +32,7 @@ config:
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: jammy-server-cloudimg-amd64.img
+  IMAGENAME: jammy-server-cloudimg-amd64.custom.img
   VMNAME_FQDN: 'cloud.local'
   VM_REPO: jammy
   VM_TEMPLATE: TPL/vm.template.xml

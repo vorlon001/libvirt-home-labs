@@ -21,7 +21,7 @@ config:
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: Rocky-9-GenericCloud-Base-9.2-20230513.0.x86_64.qcow2
+  IMAGENAME: Rocky-9-GenericCloud-Base-9.3-20231113.0.x86_64.qcow2
   VMNAME_FQDN: 'cloud.local'
   VM_REPO: jammy
   VM_TEMPLATE: TPL/vm.template.xml

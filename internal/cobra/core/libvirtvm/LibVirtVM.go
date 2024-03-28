@@ -4,7 +4,8 @@ import (
 
         "bytes"
         "os/exec"
-        "html/template"
+//        "html/template"
+        "text/template"
         "gopkg.in/yaml.v2"
 
 	"fmt"

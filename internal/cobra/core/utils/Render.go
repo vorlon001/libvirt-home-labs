@@ -6,7 +6,8 @@ import (
         "strings"
         "github.com/sirupsen/logrus"
 
-        "html/template"
+//        "html/template"
+        "text/template"
         logs "gitlab.iblog.pro/cobra/libvirt/internal/cobra/logs"
 )
 

@@ -1,11 +1,24 @@
 after-deploy:
- - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"uptime\""
- - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"yum remove cloud-init.noarch -y\""
+ - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"echo 'datasource_list: [ None ]' | sudo -s tee /etc/cloud/cloud.cfg.d/90_dpkg.cfg\""
+ - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"  pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"sudo apt-get purge -y cloud-init\""
+ - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"  pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"sudo rm -rf /etc/cloud/; sudo rm -rf /var/lib/cloud/\""
+ - "PDSH_SSH_ARGS_APPEND=\"-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\"  pdsh -R ssh -w root@192.168.200.{{.NodeId}} \"rm /etc/netplan/50-cloud-init.yaml\""
 command:
 - systemctl disable systemd-udevd.service
 - ssh-keygen -A
 - ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa  -q -P ""
 - ssh-keygen -t rsa -b 4096 -f /home/vorlon/.ssh/id_rsa  -q -P ""
+- cp /etc/netplan/50-cloud-init.yaml /etc/netplan/00-installer-config.yaml
+- echo "LANGUAGE=ru_RU:ru" > /etc/default/locale
+- echo "LANG=ru_RU.UTF-8" >> /etc/default/locale
+- touch /etc/cloud/cloud-init.disabled
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o
+  /usr/share/keyrings/docker-archive-keyring.gpg
+- sed -i "s/^ExecStart=\/usr\/lib\/systemd\/systemd-networkd-wait-online/ExecStart=\/usr\/lib\/systemd\/systemd-networkd-wait-online --i enp1s0 -i enp2s0/"  /usr/lib/systemd/system/systemd-networkd-wait-online.service
+- cat /usr/lib/systemd/system/systemd-networkd-wait-online.service
+- apt update
+- rm /etc/apt/sources.list.d/ubuntu.sources
+- systemctl disable systemd-networkd-wait-online.service
 config:
   INTERFACE_INIT:
     - name: enp1s0
@@ -17,13 +30,13 @@ config:
   ROOT_CERT_PATH: CERT/root.iblog.pro.crt
   SSD_TPL_PATH: TPL/sshd-config.tpl
   SSH_AUTH_KEYS: /root/.ssh/authorized_keys
-  USER_DATA_TPL_PATH: TPL/user-data-rocky.tpl
+  USER_DATA_TPL_PATH: TPL/user-data-ubuntu-2404.tpl
   CDDiskTemplate: TPL/CDDiskTemplate.tpl
   SCSIDiskTemplate: TPL/SCSIDiskTemplate.tpl
   E1000Networkemplate: TPL/E1000Networkemplate.tpl
-  IMAGENAME: Rocky-9-GenericCloud-Base-9.3-20231113.0.x86_64.qcow2
+  IMAGENAME: noble-server-cloudimg-amd64.custom.img
   VMNAME_FQDN: 'cloud.local'
-  VM_REPO: jammy
+  VM_REPO: noble
   VM_TEMPLATE: TPL/vm.template.xml
   VMPATH: '/cloud/KVM'
   VMIMAGEPATH: '/KVM/IMAGES'
@@ -45,18 +58,33 @@ network:
         search: cloud.local
       netmask: 24
       network: 192.168.200.
+      netmask6: 64
+      network6: "2001:db8:200:1234::"
     '400':
-      netmask: 24
-      network: 192.168.201.
+      netmask6: 64
+      network6: "2001:db8:400:1234::"
     '600':
-      netmask: 24
-      network: 192.168.202.
+      netmask6: 64
+      network6: "2001:db8:600:1234::"
     '800':
-      netmask: 24
-      network: 192.168.203.
+      netmask6: 64
+      network6: "2001:db8:800:1234::"
   magic_mac: fa:16:3e
 pgk:
+- apt-transport-https
+- ca-certificates
+- curl
+- gnupg
+- lsb-release
+- openssh-server
+- net-tools
+- tcpdump
 - mc
+- htop
+- iotop
+- iftop
+- language-pack-ru
+- pwgen
 - net-tools
 ssh-keys:
 - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCxnp89ZkURzJw3N7vQPYNOGSDuUwygyLpaJuzC0bTVO3WO85xbr1WpvrI5QboQvffCPxeDmf4p6YePOOGysa3yflG9rMnim/e0Jyczlh6WPsC+ZG4yc7VxY0nrSt/ORCWSb7Yw7+4ZzeTGj/GILR8Q8Y5TzTbzzt+YhfWaZbZ2OO+jolpK/65ft7vZ8/CysT392yUi5T/NdZn6j8GqsG3jd6K4N6NHto+w7yaVzdwhHPHfwbniMt40gBHlgg8Aa6NHO/lKETx3cm8W5ssuHfqheZt7tclNxmFe0mAHfquyIaQytBxQSRIJHh9iIhR+tlpbxTH38xPLWonYy6lqGJaEP7YJPJHZBbLxyZQ/J7IBH4dq7pE2bf/93UZ3bzRP6w9z4kTLoEXQTIM2mUUiAHGPXHw40osTx+IY3nOkDzGvV0s0Nm12WcRBcsG3WFGqf8lQSruq4iFeFbGxzcb4kKOgZC0+sG51YoINfzyqPsTigSTp1mlnOz/qqawVADZybBYl6RBrw0XBQFNmteso2TC16L3SF9YiT39xceEa4Qd92XtkMEtpVacsnsXWFFouqE9/53wyZ32jcevI34ZTlUBaNhfyGhjGys/gkctzzyDzMyxXLpqR5Hn3d2jRhD0FErxjNL3PfD/w2H+2/I2xzAV/1xqDzTK3kO2JmWwc75uWIQ== root@node4
